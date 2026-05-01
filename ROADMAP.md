@@ -25,8 +25,8 @@
 
 ## Phase 3: Android Implementation (Credential Manager API)
 
-- [ ] Add Credential Manager dependencies (`androidx.credentials:credentials`, `androidx.credentials:credentials-play-services-auth`, `com.google.android.libraries.identity.googleid:googleid`)
-- [ ] Set minimum SDK version (Credential Manager requires API 19+, but Google ID helper needs higher)
+- [x] Add Credential Manager dependencies (`androidx.credentials:credentials`, `androidx.credentials:credentials-play-services-auth`, `com.google.android.libraries.identity.googleid:googleid`)
+- [x] Set minimum SDK version (Credential Manager requires API 19+, but Google ID helper needs higher)
 - [ ] Implement `configure()` — store web client ID, nonce settings, auto-select preferences
 - [ ] Implement `signIn()` using `CredentialManager.getCredential()` with `GetSignInWithGoogleOption` (button flow) and `GetGoogleIdOption` (bottom sheet flow)
 - [ ] Handle `GoogleIdTokenCredential` parsing and return ID token + profile info to JS
