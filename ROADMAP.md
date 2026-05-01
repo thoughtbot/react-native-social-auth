@@ -15,11 +15,11 @@
 
 ## Phase 2: API Design & Codegen Spec
 
-- [ ] Draft the public JS API (provider-agnostic from day one, even if only Google ships first)
+- [x] Draft the public JS API (provider-agnostic from day one, even if only Google ships first)
 - [ ] Define core types: `AuthCredential`, `AuthUser`, `AuthError`, `SignInOptions`
-- [ ] Write the Turbo Module codegen spec in TypeScript for the Google module
-- [ ] Define methods: `configure()`, `signIn()`, `signOut()`, `getCurrentUser()`, `revokeAccess()`, `isSignedIn()`
-- [ ] Design error handling strategy (typed errors, platform-specific error codes mapped to common codes)
+- [x] Write the Turbo Module codegen spec in TypeScript for the Google module
+- [x] Define methods: `configure()`, `signIn()`, `signOut()`, `getCurrentUser()`, `revokeAccess()`, `isSignedIn()`
+- [x] Design error handling strategy (typed errors, platform-specific error codes mapped to common codes)
 - [ ] Document the provider interface so future providers (Apple, GitHub) follow the same shape
 - [ ] Review API design with thoughtbot team / gather feedback before implementation
 
