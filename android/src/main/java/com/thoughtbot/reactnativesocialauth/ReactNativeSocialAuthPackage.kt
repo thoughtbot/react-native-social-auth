@@ -9,8 +9,8 @@ import java.util.HashMap
 
 class ReactNativeSocialAuthPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-    return if (name == ReactNativeSocialAuthModule.NAME) {
-      ReactNativeSocialAuthModule(reactContext)
+    return if (name == GoogleSignInModule.NAME) {
+      GoogleSignInModule(reactContext)
     } else {
       null
     }
@@ -18,9 +18,9 @@ class ReactNativeSocialAuthPackage : BaseReactPackage() {
 
   override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
     mapOf(
-      ReactNativeSocialAuthModule.NAME to ReactModuleInfo(
-        name = ReactNativeSocialAuthModule.NAME,
-        className = ReactNativeSocialAuthModule.NAME,
+      GoogleSignInModule.NAME to ReactModuleInfo(
+        name = GoogleSignInModule.NAME,
+        className = GoogleSignInModule.NAME,
         canOverrideExistingModule = false,
         needsEagerInit = false,
         isCxxModule = false,

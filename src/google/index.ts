@@ -1,16 +1,17 @@
+export { GoogleSignIn } from './GoogleSignIn';
 export {
-  GoogleSignIn,
-  GoogleSignInButton,
   GoogleSignInError,
   GoogleSignInErrorCode,
   isGoogleSignInError,
-} from './google';
-
+} from './errors';
+export { GoogleSignInButton } from './GoogleSignInButton';
 export type {
   GoogleSignInButtonProps,
   GoogleSignInButtonTheme,
   GoogleSignInButtonSize,
+} from './GoogleSignInButton';
+export type {
   GoogleSignInConfig,
   GoogleUser,
   GoogleAuthCredential,
-} from './google';
+} from './types';
