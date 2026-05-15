@@ -81,13 +81,15 @@
     "react": "19.2.0",
     "react-native": "0.83.4",
     "react-native-builder-bob": "^0.41.0",
+    "react-native-svg": "^15.15.5",
     "release-it": "^19.2.4",
     "turbo": "^2.8.21",
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-svg": ">=13.0.0"
   },
   "workspaces": [
     "example"

@@ -1,17 +1,25 @@
 import {
   Pressable,
+  View,
   Text,
   StyleSheet,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { GoogleLogo } from './GoogleLogo';
 
 export type GoogleSignInButtonTheme = 'light' | 'dark' | 'neutral';
 
-export type GoogleSignInButtonSize = 'icon' | 'standard' | 'wide';
+export type GoogleSignInButtonShape = 'rounded' | 'square';
+
+export type GoogleSignInButtonText = 'signin' | 'signup' | 'continue';
+
+export type GoogleSignInButtonSize = 'standard' | 'icon';
 
 export interface GoogleSignInButtonProps {
   theme?: GoogleSignInButtonTheme;
+  shape?: GoogleSignInButtonShape;
+  text?: GoogleSignInButtonText;
   size?: GoogleSignInButtonSize;
   onPress?: () => void;
   disabled?: boolean;
@@ -19,34 +27,85 @@ export interface GoogleSignInButtonProps {
   testID?: string;
 }
 
+const BUTTON_LABELS: Record<GoogleSignInButtonText, string> = {
+  signin: 'Sign in with Google',
+  signup: 'Sign up with Google',
+  continue: 'Continue with Google',
+};
+
+const THEME_STYLES: Record<
+  GoogleSignInButtonTheme,
+  {
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
+    textColor: string;
+  }
+> = {
+  light: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#747775',
+    borderWidth: 1,
+    textColor: '#1F1F1F',
+  },
+  dark: {
+    backgroundColor: '#131314',
+    borderColor: '#8E918F',
+    borderWidth: 1,
+    textColor: '#E3E3E3',
+  },
+  neutral: {
+    backgroundColor: '#F2F2F2',
+    borderColor: 'transparent',
+    borderWidth: 0,
+    textColor: '#1F1F1F',
+  },
+};
+
 export function GoogleSignInButton({
   theme = 'light',
+  shape = 'rounded',
+  text = 'signin',
   size = 'standard',
   onPress,
   disabled = false,
   style,
   testID,
 }: GoogleSignInButtonProps) {
+  const themeStyle = THEME_STYLES[theme];
+  const isIcon = size === 'icon';
+  const borderRadius = shape === 'rounded' ? 20 : 4;
+  const label = BUTTON_LABELS[text];
+
   return (
     <Pressable
       style={[
-        styles.base,
-        theme === 'dark' && styles.dark,
-        theme === 'neutral' && styles.neutral,
-        size === 'wide' && styles.wide,
-        size === 'icon' && styles.iconOnly,
+        styles.button,
+        {
+          backgroundColor: themeStyle.backgroundColor,
+          borderColor: themeStyle.borderColor,
+          borderWidth: themeStyle.borderWidth,
+          borderRadius,
+        },
+        isIcon && styles.iconButton,
         disabled && styles.disabled,
         style,
       ]}
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"
-      accessibilityLabel="Sign in with Google"
+      accessibilityLabel={label}
       testID={testID}
     >
-      {size !== 'icon' && (
-        <Text style={[styles.text, theme === 'dark' && styles.textDark]}>
-          Sign in with Google
+      <View style={isIcon ? styles.iconLogoContainer : styles.logoContainer}>
+        <GoogleLogo size={20} />
+      </View>
+      {!isIcon && (
+        <Text
+          style={[styles.label, { color: themeStyle.textColor }]}
+          numberOfLines={1}
+        >
+          {label}
         </Text>
       )}
     </Pressable>
@@ -54,44 +113,33 @@ export function GoogleSignInButton({
 }
 
 const styles = StyleSheet.create({
-  base: {
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
+    height: 40,
+    alignSelf: 'flex-start',
+  },
+  iconButton: {
+    width: 40,
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#dadce0',
-    minHeight: 40,
   },
-  dark: {
-    backgroundColor: '#131314',
-    borderColor: '#8e918f',
+  logoContainer: {
+    marginLeft: 12,
+    marginRight: 10,
   },
-  neutral: {
-    backgroundColor: '#f2f2f2',
-    borderColor: '#f2f2f2',
+  iconLogoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
-  wide: {
-    paddingHorizontal: 24,
-    minWidth: 280,
-  },
-  iconOnly: {
-    paddingHorizontal: 10,
-    minWidth: 40,
+  label: {
+    fontFamily: 'Roboto-Medium',
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '500',
+    marginRight: 12,
   },
   disabled: {
     opacity: 0.38,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1f1f1f',
-    letterSpacing: 0.25,
-  },
-  textDark: {
-    color: '#e3e3e3',
   },
 });
