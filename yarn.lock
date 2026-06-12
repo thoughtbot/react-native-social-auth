@@ -3775,6 +3775,7 @@ __metadata:
     react-native: "npm:0.83.4"
     react-native-builder-bob: "npm:^0.41.0"
     react-native-monorepo-config: "npm:^0.3.3"
+    react-native-svg: "npm:^15.15.5"
     react-native-web: "npm:~0.21.0"
   languageName: unknown
   linkType: soft
