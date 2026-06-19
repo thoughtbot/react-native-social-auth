@@ -9,6 +9,8 @@ export {
 export type {
   GoogleSignInButtonProps,
   GoogleSignInButtonTheme,
+  GoogleSignInButtonShape,
+  GoogleSignInButtonText,
   GoogleSignInButtonSize,
   GoogleSignInConfig,
   GoogleUser,

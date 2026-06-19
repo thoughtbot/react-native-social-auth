@@ -84,3 +84,8 @@ android/generated
 
 # React Native Nitro Modules
 nitrogen/
+
+# env files
+.env
+.env.local
+!.env.example
