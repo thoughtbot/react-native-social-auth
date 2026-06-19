@@ -16,6 +16,7 @@ import {
 } from '@thoughtbot/react-native-social-auth';
 
 const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
+const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
 
 export default function App() {
   const [user, setUser] = useState<GoogleUser | null>(null);
@@ -29,7 +30,10 @@ export default function App() {
       return;
     }
     try {
-      GoogleSignIn.configure({ webClientId: WEB_CLIENT_ID });
+      GoogleSignIn.configure({
+        webClientId: WEB_CLIENT_ID,
+        iosClientId: IOS_CLIENT_ID,
+      });
       const credential = await GoogleSignIn.signIn();
       setUser(credential.user);
     } catch (error) {
