@@ -38,24 +38,24 @@
 
 ## Phase 4: iOS Implementation (GoogleSignIn-iOS SDK)
 
-- [ ] Add `GoogleSignIn` via CocoaPods in the podspec
+- [x] Add `GoogleSignIn` via CocoaPods in the podspec
 - [ ] Configure `Info.plist` URL schemes (document this for package consumers)
-- [ ] Implement `configure()` — store iOS client ID, server client ID (for ID token audience)
-- [ ] Implement `signIn()` using `GIDSignIn.sharedInstance.signIn(withPresenting:)` — get the root view controller from RN
-- [ ] Return ID token, access token, and user profile to JS in the same shape as Android
-- [ ] Implement `signOut()` and `disconnect()` (revoke)
-- [ ] Implement `getCurrentUser()` via `GIDSignIn.sharedInstance.currentUser`
-- [ ] Handle `restorePreviousSignIn` for silent re-authentication
-- [ ] Map `GIDSignInError` codes to typed JS errors matching Android's error shape
-- [ ] Handle the URL callback in AppDelegate (document the required `application(_:open:options:)` integration)
-- [ ] Test on physical iOS device and simulator
+- [x] Implement `configure()` — store iOS client ID, server client ID (for ID token audience)
+- [x] Implement `signIn()` using `GIDSignIn.sharedInstance.signIn(withPresenting:)` — get the root view controller from RN
+- [x] Return ID token, access token, and user profile to JS in the same shape as Android
+- [x] Implement `signOut()` and `disconnect()` (revoke)
+- [x] Implement `getCurrentUser()` via `GIDSignIn.sharedInstance.currentUser`
+- [x] Handle `restorePreviousSignIn` for silent re-authentication
+- [x] Map `GIDSignInError` codes to typed JS errors matching Android's error shape
+- [x] Handle the URL callback in AppDelegate (document the required `application(_:open:options:)` integration)
+- [x] Test on physical iOS device and simulator
 
 ## Phase 5: JS Layer & Button Components
 
 - [ ] Implement the provider abstraction layer that dispatches to platform modules
-- [ ] Build `GoogleSignInButton` as a styled React component (not native) per Google's 2025 branding guidelines
-- [ ] Support light/dark/neutral theme variants
-- [ ] Support icon-only, standard, and wide button shapes
+- [x] Build `GoogleSignInButton` as a styled React component (not native) per Google's 2025 branding guidelines
+- [x] Support light/dark/neutral theme variants
+- [x] Support icon-only, standard, and wide button shapes
 - [ ] Support localization (button text in multiple languages per Google's assets)
 - [ ] Ensure accessibility labels and roles are correct
 - [ ] Build generic `<SignInButton provider="google" />` wrapper for future extensibility
@@ -70,9 +70,9 @@
 
 ## Phase 7: Documentation
 
-- [ ] Write comprehensive README: install, platform setup, quickstart, API reference
-- [ ] Document Google Cloud Console setup (creating OAuth client IDs for Android, iOS, web)
-- [ ] Document SHA-1 fingerprint setup for Android
+- [x] Write comprehensive README: install, platform setup, quickstart, API reference
+- [x] Document Google Cloud Console setup (creating OAuth client IDs for Android, iOS, web)
+- [x] Document SHA-1 fingerprint setup for Android
 - [ ] Document `Info.plist` configuration for iOS
 - [ ] Provide migration guide from `@react-native-google-signin/google-signin`
 - [ ] Document ID token verification on the backend (link to Google's guides)
