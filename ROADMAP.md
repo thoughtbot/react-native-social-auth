@@ -8,7 +8,7 @@
 - [ ] Configure TypeScript (strict mode), ESLint, Prettier — align with thoughtbot's existing JS/TS style guide
 - [x] Set up `react-native-builder-bob` for building the package
 - [ ] Configure Jest + React Native Testing Library
-- [ ] Set up GitHub Actions CI (lint, typecheck, test, build, example app build)
+- [x] Set up GitHub Actions CI (lint, typecheck, test, build, example app build)
 - [ ] Add MIT license, CONTRIBUTING.md, CODE_OF_CONDUCT.md, issue/PR templates
 - [x] Set up changesets (or semantic-release) for versioning
 - [x] Create example app demonstrating the package
@@ -16,7 +16,7 @@
 ## Phase 2: API Design & Codegen Spec
 
 - [x] Draft the public JS API (provider-agnostic from day one, even if only Google ships first)
-- [ ] Define core types: `AuthCredential`, `AuthUser`, `AuthError`, `SignInOptions`
+- [x] Define core types: `AuthCredential`, `AuthUser`, `AuthError`, `SignInOptions`
 - [x] Write the Turbo Module codegen spec in TypeScript for the Google module
 - [x] Define methods: `configure()`, `signIn()`, `signOut()`, `getCurrentUser()`, `revokeAccess()`, `isSignedIn()`
 - [x] Design error handling strategy (typed errors, platform-specific error codes mapped to common codes)
@@ -27,14 +27,14 @@
 
 - [x] Add Credential Manager dependencies (`androidx.credentials:credentials`, `androidx.credentials:credentials-play-services-auth`, `com.google.android.libraries.identity.googleid:googleid`)
 - [x] Set minimum SDK version (Credential Manager requires API 19+, but Google ID helper needs higher)
-- [ ] Implement `configure()` — store web client ID, nonce settings, auto-select preferences
-- [ ] Implement `signIn()` using `CredentialManager.getCredential()` with `GetSignInWithGoogleOption` (button flow) and `GetGoogleIdOption` (bottom sheet flow)
-- [ ] Handle `GoogleIdTokenCredential` parsing and return ID token + profile info to JS
-- [ ] Implement `signOut()` via `CredentialManager.clearCredentialState()`
-- [ ] Implement nonce generation and validation helpers
-- [ ] Map Android exceptions (`GetCredentialException`, `NoCredentialException`, user cancellation) to typed JS errors
-- [ ] Handle both bottom-sheet (One Tap replacement) and button-triggered flows
-- [ ] Test on physical Android device with and without Google account configured
+- [x] Implement `configure()` — store web client ID, nonce settings, auto-select preferences
+- [x] Implement `signIn()` using `CredentialManager.getCredential()` with `GetSignInWithGoogleOption` (button flow) and `GetGoogleIdOption` (bottom sheet flow)
+- [x] Handle `GoogleIdTokenCredential` parsing and return ID token + profile info to JS
+- [x] Implement `signOut()` via `CredentialManager.clearCredentialState()`
+- [x] Implement nonce generation and validation helpers
+- [x] Map Android exceptions (`GetCredentialException`, `NoCredentialException`, user cancellation) to typed JS errors
+- [x] Handle both bottom-sheet (One Tap replacement) and button-triggered flows
+- [x] Test on physical Android device with and without Google account configured
 
 ## Phase 4: iOS Implementation (GoogleSignIn-iOS SDK)
 
