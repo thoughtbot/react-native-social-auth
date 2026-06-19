@@ -2,11 +2,11 @@
 
 Drop-in Google Sign-In for React Native using Android's Credential Manager and the official Google branding.
 
-**Platform support:** ✅ Android · 🚧 iOS (in progress — see [ROADMAP.md](ROADMAP.md))
+**Platform support:** ✅ Android · ✅ iOS
 
 ## Features
 
-- Android **Credential Manager** integration with the bottom sheet flow and automatic sign-in fallback
+- Android **Credential Manager** and iOS **GoogleSignIn-iOS SDK** integration, both with auto-sign-in + interactive fallback
 - Google-branding-compliant **`GoogleSignInButton`** (3 themes, 2 shapes, 3 text variants, icon-only)
 - TypeScript-first, ships as a **Turbo Module** (new architecture)
 - Typed errors via `GoogleSignInError` and `GoogleSignInErrorCode` for clean UX-level handling
@@ -57,8 +57,72 @@ Most "sign-in failed" issues come from misconfigured credentials. Follow these s
      ```
      and copy the `SHA1` line under `Variant: debug`.
 5. **Repeat step 4 for production.** The debug client only authorizes your debug-signed APK. Before shipping a signed release build (Play Store, internal testing tracks, or any release-signed APK), create a **second Android OAuth client** in the same GCP project using the same package name and the **release SHA-1** of your upload/signing key. If you use **Play App Signing**, use the **App signing key certificate** SHA-1 from the Play Console (Setup → App integrity), not your upload key. Without this, production users will hit `[28444] Developer console is not set up correctly`.
+6. **For iOS**, also create an **iOS** OAuth client ID in the same GCP project with your app's **Bundle Identifier**. Copy the Client ID — pass it as `iosClientId`. Copy the **iOS URL scheme** Google shows you (it's the reversed iOS Client ID, e.g. `com.googleusercontent.apps.123456-abcdef`) — you'll add it to `Info.plist` in the next section.
 
-The Web client ID is what your code references; each Android client is an invisible passport that authorizes a specific build (debug, release, or per-environment) to use it. **All clients must live in the same GCP project.**
+The Web client ID is what your code references for the ID-token audience; each platform-specific client (Android debug, Android release, iOS) is an invisible passport that authorizes a specific build to use it. **All clients must live in the same GCP project.**
+
+## iOS setup
+
+In addition to the Cloud Console step above, the host app needs two iOS-specific changes.
+
+### 1. Register the OAuth URL scheme
+
+Google routes the sign-in callback back into your app via a custom URL scheme. Add the reversed iOS Client ID to `Info.plist`:
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>com.googleusercontent.apps.YOUR-REVERSED-IOS-CLIENT-ID</string>
+    </array>
+  </dict>
+</array>
+```
+
+If you use **Expo**, declare it in `app.json` under `expo.ios.infoPlist.CFBundleURLTypes` and rerun `npx expo prebuild --platform ios --clean`.
+
+### 2. Forward incoming URLs to the SDK
+
+In your `AppDelegate`, forward `application(_:open:options:)` to `GoogleSignIn.handleURL(_:)`.
+
+**Swift:**
+```swift
+import react_native_social_auth
+
+func application(
+  _ app: UIApplication,
+  open url: URL,
+  options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+) -> Bool {
+  return GoogleSignIn.handleURL(url)
+}
+```
+
+**Objective-C:**
+```objc
+#import <react_native_social_auth/GoogleSignIn.h>
+
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+  return [GoogleSignIn handleURL:url];
+}
+```
+
+### 3. Configure with both client IDs
+
+Pass both the Web client ID (token audience) and iOS client ID (caller identity) to `configure`:
+
+```ts
+GoogleSignIn.configure({
+  webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+  iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
+});
+```
+
+Finally, run `cd ios && pod install` after installing the package.
 
 ## Quick start
 
@@ -229,16 +293,16 @@ A runnable example lives in [`/example`](example/). To try it:
 ```sh
 yarn install
 cp example/.env.example example/.env
-# Edit example/.env and set EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+# Edit example/.env and set EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID (and EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID for iOS)
 yarn workspace @thoughtbot/react-native-social-auth-example start --clear
 yarn workspace @thoughtbot/react-native-social-auth-example android
+# or for iOS:
+yarn workspace @thoughtbot/react-native-social-auth-example ios
 ```
 
+For iOS, edit `example/app.json` and replace `REPLACE_WITH_REVERSED_IOS_CLIENT_ID` under `expo.ios.infoPlist.CFBundleURLTypes` with your reversed iOS Client ID, then run `npx expo prebuild --platform ios --clean` before the `yarn ios` command.
+
 The example showcases every variant of `GoogleSignInButton` and exercises the full public API.
-
-## iOS status
-
-iOS support is being implemented as part of [ROADMAP.md](ROADMAP.md) Phase 4. Until it lands, calling `GoogleSignIn.signIn()` on iOS rejects with `ERR_NOT_IMPLEMENTED`. The TypeScript surface is stable, so you can wire your UI today and it will start working as soon as the native module ships.
 
 ## Contributing
 
