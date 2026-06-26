@@ -84,17 +84,17 @@ const withGoogleSignInAppDelegate: ConfigPlugin = (config) => {
 export function injectSwiftURLHandler(contents: string): string {
   const snippet = `
   ${MARKER}
-  public override func application(
+  @objc
+  public func application(
     _ app: UIApplication,
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
-    if GoogleSignIn.handleURL(url) { return true }
-    return super.application(app, open: url, options: options)
+    return GIDSignIn.sharedInstance.handle(url)
   }
 `;
 
-  const importLine = 'import react_native_social_auth';
+  const importLine = 'import GoogleSignIn';
   let next = contents;
   if (!next.includes(importLine)) {
     next = next.replace(
@@ -121,12 +121,12 @@ ${MARKER}
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
 {
-  if ([GoogleSignIn handleURL:url]) { return YES; }
+  if ([[GIDSignIn sharedInstance] handleURL:url]) { return YES; }
   return [super application:application openURL:url options:options];
 }
 `;
 
-  const importLine = '#import <react_native_social_auth/GoogleSignIn.h>';
+  const importLine = '#import <GoogleSignIn/GoogleSignIn.h>';
   let next = contents;
   if (!next.includes(importLine)) {
     next = next.replace(/(#import "AppDelegate\.h")/, `$1\n${importLine}`);

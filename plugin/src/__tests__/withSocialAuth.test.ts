@@ -38,18 +38,26 @@ public class AppDelegate: ExpoAppDelegate {
 `;
 
 describe('injectSwiftURLHandler', () => {
-  it('adds the import and URL handler override', () => {
+  it('adds the import and URL handler method', () => {
     const out = injectSwiftURLHandler(SWIFT_FIXTURE);
-    expect(out).toContain('import react_native_social_auth');
-    expect(out).toContain('GoogleSignIn.handleURL(url)');
-    expect(out).toContain(
-      'public override func application(\n    _ app: UIApplication'
-    );
+    expect(out).toContain('import GoogleSignIn');
+    expect(out).toContain('GIDSignIn.sharedInstance.handle(url)');
+    expect(out).toContain('public func application(\n    _ app: UIApplication');
+    expect(out).toContain('@objc');
   });
 
-  it('places the override inside the AppDelegate class (before the closing brace)', () => {
+  it('does not use `override` on the URL handler (parent class does not declare it)', () => {
     const out = injectSwiftURLHandler(SWIFT_FIXTURE);
-    const handlerIndex = out.indexOf('GoogleSignIn.handleURL');
+    const markerIndex = out.indexOf(
+      '/* @thoughtbot/react-native-social-auth: URL handler */'
+    );
+    const injected = out.slice(markerIndex);
+    expect(injected).not.toContain('override');
+  });
+
+  it('places the method inside the AppDelegate class (before the closing brace)', () => {
+    const out = injectSwiftURLHandler(SWIFT_FIXTURE);
+    const handlerIndex = out.indexOf('GIDSignIn.sharedInstance.handle');
     const lastBraceIndex = out.lastIndexOf('}');
     expect(handlerIndex).toBeLessThan(lastBraceIndex);
   });
@@ -78,8 +86,8 @@ const OBJC_FIXTURE = `#import "AppDelegate.h"
 describe('injectObjCURLHandler', () => {
   it('adds the import and openURL method', () => {
     const out = injectObjCURLHandler(OBJC_FIXTURE);
-    expect(out).toContain('#import <react_native_social_auth/GoogleSignIn.h>');
-    expect(out).toContain('[GoogleSignIn handleURL:url]');
+    expect(out).toContain('#import <GoogleSignIn/GoogleSignIn.h>');
+    expect(out).toContain('[[GIDSignIn sharedInstance] handleURL:url]');
     expect(out).toContain(
       '- (BOOL)application:(UIApplication *)application\n            openURL:(NSURL *)url'
     );
@@ -87,7 +95,9 @@ describe('injectObjCURLHandler', () => {
 
   it('places the method before @end', () => {
     const out = injectObjCURLHandler(OBJC_FIXTURE);
-    const handlerIndex = out.indexOf('[GoogleSignIn handleURL:url]');
+    const handlerIndex = out.indexOf(
+      '[[GIDSignIn sharedInstance] handleURL:url]'
+    );
     const endIndex = out.lastIndexOf('@end');
     expect(handlerIndex).toBeLessThan(endIndex);
   });

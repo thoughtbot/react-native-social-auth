@@ -87,29 +87,30 @@ If you use **Expo**, declare it in `app.json` under `expo.ios.infoPlist.CFBundle
 
 ### 2. Forward incoming URLs to the SDK
 
-In your `AppDelegate`, forward `application(_:open:options:)` to `GoogleSignIn.handleURL(_:)`.
+In your `AppDelegate`, forward `application(_:open:options:)` to `GIDSignIn.sharedInstance.handle(_:)`. Importing `GoogleSignIn` here pulls in the official GoogleSignIn-iOS SDK module (already a transitive dependency of this package).
 
 **Swift:**
 ```swift
-import react_native_social_auth
+import GoogleSignIn
 
-func application(
+@objc
+public func application(
   _ app: UIApplication,
   open url: URL,
   options: [UIApplication.OpenURLOptionsKey: Any] = [:]
 ) -> Bool {
-  return GoogleSignIn.handleURL(url)
+  return GIDSignIn.sharedInstance.handle(url)
 }
 ```
 
 **Objective-C:**
 ```objc
-#import <react_native_social_auth/GoogleSignIn.h>
+#import <GoogleSignIn/GoogleSignIn.h>
 
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-  return [GoogleSignIn handleURL:url];
+  return [[GIDSignIn sharedInstance] handleURL:url];
 }
 ```
 
