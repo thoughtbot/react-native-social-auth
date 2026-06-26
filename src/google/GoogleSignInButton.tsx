@@ -8,22 +8,60 @@ import {
 } from 'react-native';
 import { GoogleLogo } from './GoogleLogo';
 
+/**
+ * One of the three button themes defined by Google's branding guidelines.
+ *
+ * - `light` — white background, dark text, gray border
+ * - `dark` — near-black background, light text, gray border
+ * - `neutral` — light gray background, dark text, no border
+ */
 export type GoogleSignInButtonTheme = 'light' | 'dark' | 'neutral';
 
+/**
+ * Button corner radius:
+ *
+ * - `rounded` — pill shape (`borderRadius: 20`)
+ * - `square` — slightly rounded rectangle (`borderRadius: 4`)
+ */
 export type GoogleSignInButtonShape = 'rounded' | 'square';
 
+/**
+ * The call-to-action label. Only these three strings are permitted by Google.
+ *
+ * - `signin` — "Sign in with Google"
+ * - `signup` — "Sign up with Google"
+ * - `continue` — "Continue with Google"
+ */
 export type GoogleSignInButtonText = 'signin' | 'signup' | 'continue';
 
+/**
+ * Button size:
+ *
+ * - `standard` — full button with logo + text
+ * - `icon` — 40×40 logo-only button for compact layouts
+ */
 export type GoogleSignInButtonSize = 'standard' | 'icon';
 
+/** Props for {@link GoogleSignInButton}. */
 export interface GoogleSignInButtonProps {
+  /** {@inheritDoc GoogleSignInButtonTheme} @defaultValue `'light'` */
   theme?: GoogleSignInButtonTheme;
+  /** {@inheritDoc GoogleSignInButtonShape} @defaultValue `'rounded'` */
   shape?: GoogleSignInButtonShape;
+  /** {@inheritDoc GoogleSignInButtonText} @defaultValue `'signin'` */
   text?: GoogleSignInButtonText;
+  /** {@inheritDoc GoogleSignInButtonSize} @defaultValue `'standard'` */
   size?: GoogleSignInButtonSize;
+  /** Tap handler. Typically wired to {@link GoogleSignIn.signIn}. */
   onPress?: () => void;
+  /**
+   * When `true`, renders at 0.38 opacity and disables taps.
+   * @defaultValue false
+   */
   disabled?: boolean;
+  /** Additional container styles (margin, alignment, etc.). */
   style?: StyleProp<ViewStyle>;
+  /** Testing identifier. */
   testID?: string;
 }
 
@@ -62,6 +100,25 @@ const THEME_STYLES: Record<
   },
 };
 
+/**
+ * A pre-built button conforming to Google's official branding guidelines.
+ *
+ * @remarks
+ * The Google "G" is rendered via `react-native-svg` so the button stays crisp
+ * at any density without bundled raster assets. Colors, typography, padding,
+ * and the permitted CTA strings all follow the official spec — do not
+ * restyle the logo or override theme colors, or Google may reject your app
+ * during brand review.
+ *
+ * @example
+ * ```tsx
+ * <GoogleSignInButton
+ *   theme="dark"
+ *   text="continue"
+ *   onPress={() => GoogleSignIn.signIn()}
+ * />
+ * ```
+ */
 export function GoogleSignInButton({
   theme = 'light',
   shape = 'rounded',
