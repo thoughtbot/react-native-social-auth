@@ -87,6 +87,14 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
+The test suite covers:
+
+- **JS API tests** (`src/google/__tests__/GoogleSignIn.test.ts`) — the `configure`-then-call contract on the `GoogleSignIn` wrapper, with the native TurboModule mocked.
+- **Error tests** (`src/google/__tests__/errors.test.ts`) — `GoogleSignInError`, the `GoogleSignInErrorCode` enum, and the `isGoogleSignInError` type guard.
+- **Component tests** (`src/google/__tests__/GoogleSignInButton.test.tsx`) — accessibility labels, `onPress` / `disabled` behavior, and theme/shape/text variants, using [React Native Testing Library](https://callstack.github.io/react-native-testing-library/).
+
+`react-native-svg` is mocked via `__mocks__/react-native-svg.js` so the button renders without native bindings during tests.
+
 
 ### Commit message convention
 
@@ -102,15 +110,37 @@ We follow the [conventional commits specification](https://www.conventionalcommi
 Our pre-commit hooks verify that your commit message matches this format when committing.
 
 
-### Publishing to npm
+### Releasing
 
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
+Releases are driven by [conventional commits](#commit-message-convention) and shipped from CI — no developer needs npm credentials.
 
-To publish new versions, run the following:
+**Trigger a release:**
 
-```sh
-yarn release
-```
+1. Open the [Actions](../../actions) tab on GitHub.
+2. Pick the **Release** workflow.
+3. Click **Run workflow** on the `main` branch. Tick **Dry run** first to preview the version bump and changelog without publishing.
+4. The job is gated on the `npm-production` GitHub Environment — an approved reviewer must click **Approve and run** before the publish step executes.
+
+**What happens under the hood:**
+
+The workflow runs lint / typecheck / test / build as gates, then invokes [release-it](https://github.com/release-it/release-it) with the angular conventional-changelog preset. release-it walks every commit since the last `v*` tag and decides the bump:
+
+| Commit type            | Bump    |
+| ---------------------- | ------- |
+| `feat:`                | minor   |
+| `fix:`                 | patch   |
+| `feat!:` / `BREAKING CHANGE:` | major |
+| `chore:`, `docs:`, `style:`, `refactor:`, `test:` | none |
+
+If the bump is non-zero, release-it updates `package.json`, regenerates `CHANGELOG.md`, commits + tags the change, pushes both to `main`, publishes to npm, and creates a matching GitHub Release.
+
+**Authentication:**
+
+The workflow authenticates to npm via [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC), so there is no long-lived `NPM_TOKEN`. The npm registry validates the runner's OIDC token against the trusted-publisher config on the package (repository + workflow filename + environment) before issuing a short-lived publish credential.
+
+**Local fallback:**
+
+`yarn release` still works for local-machine emergencies if CI is unavailable, but it requires the maintainer to be logged into npm with publish access on `@thoughtbot/react-native-social-auth`. Prefer the workflow.
 
 
 ### Scripts
@@ -119,14 +149,16 @@ The `package.json` file contains various scripts for common tasks:
 
 - `yarn`: setup project by installing dependencies.
 - `yarn typecheck`: type-check files with TypeScript.
-  - `yarn lint`: lint files with [ESLint](https://eslint.org/).
-    - `yarn test`: run unit tests with [Jest](https://jestjs.io/).
-  - `yarn example start`: start the Metro server for the example app.
+- `yarn lint`: lint files with [ESLint](https://eslint.org/).
+- `yarn test`: run unit + component tests with [Jest](https://jestjs.io/) and [React Native Testing Library](https://callstack.github.io/react-native-testing-library/).
+- `yarn prepare`: build the library to `lib/` with [react-native-builder-bob](https://github.com/callstack/react-native-builder-bob) (also runs automatically before `npm publish`).
+- `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
-  - `yarn example web`: run the example app on Web.
+- `yarn example web`: run the example app on Web.
 - `yarn example build:web`: build the example app for Web.
-  
+
+
 ### Sending a pull request
 
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
