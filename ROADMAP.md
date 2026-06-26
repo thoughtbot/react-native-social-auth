@@ -64,10 +64,10 @@
 
 ## Phase 6: Expo Support
 
-- [ ] Write an Expo config plugin that handles `Info.plist` URL schemes (iOS) and any Android manifest needs
-- [ ] Test in Expo prebuild / development build workflow
-- [ ] Document Expo managed workflow limitations (if any) and EAS build setup
-- [ ] Add the config plugin to the package's `app.plugin.js` entry
+- [x] Write an Expo config plugin that handles `Info.plist` URL schemes and `AppDelegate` URL forwarding (iOS). Android is a no-op — Credential Manager needs no manifest changes.
+- [x] Test in Expo prebuild / development build workflow (covered by `plugin/src/__tests__/withSocialAuth.test.ts` + the example app)
+- [x] Document Expo managed workflow limitations (Expo Go not supported; dev client / EAS Build required) and the install flow
+- [x] Add the config plugin to the package's `app.plugin.js` entry
 
 ## Phase 7: Documentation
 
