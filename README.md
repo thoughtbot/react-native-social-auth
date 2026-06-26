@@ -173,7 +173,7 @@ Stores credentials and options used by subsequent calls.
 | Field            | Type       | Required | Description                                                                                       |
 | ---------------- | ---------- | -------- | ------------------------------------------------------------------------------------------------- |
 | `webClientId`    | `string`   | Yes      | The **Web application** OAuth Client ID. This is the audience of the issued ID token.             |
-| `iosClientId`    | `string`   | No       | iOS OAuth Client ID (used once iOS support lands).                                                |
+| `iosClientId`    | `string`   | No       | iOS OAuth Client ID.                                                |
 | `offlineAccess`  | `boolean`  | No       | Request a server auth code in addition to the ID token. Default `false`.                          |
 | `scopes`         | `string[]` | No       | Additional OAuth scopes beyond the default profile/email.                                         |
 | `hostedDomain`   | `string`   | No       | Restrict sign-in to a Google Workspace domain.                                                    |
