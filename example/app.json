@@ -13,17 +13,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "thoughtbot.reactnativesocialauth.example",
-      "infoPlist": {
-        "CFBundleURLTypes": [
-          {
-            "CFBundleURLSchemes": [
-              "com.googleusercontent.apps.476683722118-27sdo4g5f7n5egip0r3ig7v3m35q9cql"
-            ]
-          }
-        ]
-      }
+      "bundleIdentifier": "thoughtbot.reactnativesocialauth.example"
     },
+    "plugins": [
+      [
+        "@thoughtbot/react-native-social-auth",
+        {
+          "iosClientId": "476683722118-27sdo4g5f7n5egip0r3ig7v3m35q9cql.apps.googleusercontent.com"
+        }
+      ]
+    ],
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
