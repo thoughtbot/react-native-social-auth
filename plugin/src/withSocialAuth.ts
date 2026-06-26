@@ -45,8 +45,8 @@ const withGoogleSignInURLScheme: ConfigPlugin<{ reversedClientId: string }> = (
   config,
   { reversedClientId }
 ) => {
-  return withInfoPlist(config, (config) => {
-    const urlTypes = (config.modResults.CFBundleURLTypes ??= []);
+  return withInfoPlist(config, (mod) => {
+    const urlTypes = (mod.modResults.CFBundleURLTypes ??= []);
     const alreadyRegistered = urlTypes.some((entry) =>
       (entry.CFBundleURLSchemes ?? []).includes(reversedClientId)
     );
@@ -55,28 +55,28 @@ const withGoogleSignInURLScheme: ConfigPlugin<{ reversedClientId: string }> = (
         CFBundleURLSchemes: [reversedClientId],
       });
     }
-    return config;
+    return mod;
   });
 };
 
 const withGoogleSignInAppDelegate: ConfigPlugin = (config) => {
-  return withAppDelegate(config, (config) => {
-    const { language, contents } = config.modResults;
+  return withAppDelegate(config, (mod) => {
+    const { language, contents } = mod.modResults;
 
     if (contents.includes(MARKER)) {
-      return config;
+      return mod;
     }
 
     if (language === 'swift') {
-      config.modResults.contents = injectSwiftURLHandler(contents);
+      mod.modResults.contents = injectSwiftURLHandler(contents);
     } else if (language === 'objcpp' || language === 'objc') {
-      config.modResults.contents = injectObjCURLHandler(contents);
+      mod.modResults.contents = injectObjCURLHandler(contents);
     } else {
       throw new Error(
         `[${PLUGIN_NAME}] Unknown AppDelegate language "${language}". Expected "swift" or "objcpp".`
       );
     }
-    return config;
+    return mod;
   });
 };
 
