@@ -8,6 +8,27 @@ import {
 } from 'react-native';
 import { GoogleLogo } from './GoogleLogo';
 
+// Layout dimensions
+const BUTTON_HEIGHT = 40;
+const ICON_BUTTON_SIZE = 40;
+const BORDER_RADIUS_ROUNDED = 20;
+const BORDER_RADIUS_SQUARE = 4;
+const GOOGLE_LOGO_SIZE = 20;
+
+// Spacing
+const LOGO_MARGIN_START = 12;
+const LOGO_MARGIN_END = 10;
+
+// Typography
+const LABEL_FONT_SIZE = 14;
+const LABEL_LINE_HEIGHT = 20;
+const LABEL_FONT_WEIGHT = '500';
+
+// Effects
+const DISABLED_OPACITY = 0.38;
+const BORDER_WIDTH_THEMED = 1;
+const BORDER_WIDTH_NEUTRAL = 0;
+
 /**
  * One of the three button themes defined by Google's branding guidelines.
  *
@@ -83,19 +104,19 @@ const THEME_STYLES: Record<
   light: {
     backgroundColor: '#FFFFFF',
     borderColor: '#747775',
-    borderWidth: 1,
+    borderWidth: BORDER_WIDTH_THEMED,
     textColor: '#1F1F1F',
   },
   dark: {
     backgroundColor: '#131314',
     borderColor: '#8E918F',
-    borderWidth: 1,
+    borderWidth: BORDER_WIDTH_THEMED,
     textColor: '#E3E3E3',
   },
   neutral: {
     backgroundColor: '#F2F2F2',
     borderColor: 'transparent',
-    borderWidth: 0,
+    borderWidth: BORDER_WIDTH_NEUTRAL,
     textColor: '#1F1F1F',
   },
 };
@@ -131,7 +152,8 @@ export function GoogleSignInButton({
 }: GoogleSignInButtonProps) {
   const themeStyle = THEME_STYLES[theme];
   const isIcon = size === 'icon';
-  const borderRadius = shape === 'rounded' ? 20 : 4;
+  const borderRadius =
+    shape === 'rounded' ? BORDER_RADIUS_ROUNDED : BORDER_RADIUS_SQUARE;
   const label = BUTTON_LABELS[text];
 
   return (
@@ -155,7 +177,7 @@ export function GoogleSignInButton({
       testID={testID}
     >
       <View style={isIcon ? styles.iconLogoContainer : styles.logoContainer}>
-        <GoogleLogo size={20} />
+        <GoogleLogo size={GOOGLE_LOGO_SIZE} />
       </View>
       {!isIcon && (
         <Text
@@ -173,16 +195,16 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 40,
+    height: BUTTON_HEIGHT,
     alignSelf: 'flex-start',
   },
   iconButton: {
-    width: 40,
+    width: ICON_BUTTON_SIZE,
     justifyContent: 'center',
   },
   logoContainer: {
-    marginLeft: 12,
-    marginRight: 10,
+    marginStart: LOGO_MARGIN_START,
+    marginEnd: LOGO_MARGIN_END,
   },
   iconLogoContainer: {
     alignItems: 'center',
@@ -191,12 +213,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: 'Roboto-Medium',
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '500',
-    marginRight: 12,
+    fontSize: LABEL_FONT_SIZE,
+    lineHeight: LABEL_LINE_HEIGHT,
+    fontWeight: LABEL_FONT_WEIGHT,
+    marginEnd: LOGO_MARGIN_END,
   },
   disabled: {
-    opacity: 0.38,
+    opacity: DISABLED_OPACITY,
   },
 });
