@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Dry run (no publish, no tag push, no git push)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: npm-production
+
+    permissions:
+      contents: write
+      # `id-token: write` lets the runner mint the OIDC token that npm
+      # Trusted Publishing exchanges for a short-lived publish credential.
+      # Without this, `npm publish` falls back to looking for NPM_TOKEN.
+      id-token: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Ensure npm supports Trusted Publishing
+        # Trusted Publishing requires npm >= 11.5.1. Node 24 bundles a recent
+        # npm but the exact minor varies; pin to latest to avoid ambiguity.
+        run: npm install -g npm@latest
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Test
+        run: yarn test --maxWorkers=2
+
+      - name: Build library
+        run: yarn prepare
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No NPM_TOKEN: authentication is via npm Trusted Publishing (OIDC).
+          # Provenance attestation is required for Trusted Publishing.
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: |
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            yarn release --ci --dry-run
+          else
+            yarn release --ci
+          fi

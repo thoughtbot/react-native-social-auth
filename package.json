@@ -60,7 +60,8 @@
   },
   "homepage": "https://github.com/thoughtbot/react-native-social-auth#readme",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.5.0",
@@ -143,19 +144,33 @@
   "release-it": {
     "git": {
       "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
+      "tagName": "v${version}",
+      "tagAnnotation": "Release ${version}",
+      "requireCleanWorkingDir": true,
+      "push": true
     },
     "npm": {
-      "publish": true
+      "publish": true,
+      "skipChecks": true
     },
     "github": {
-      "release": true
+      "release": true,
+      "releaseName": "v${version}"
+    },
+    "hooks": {
+      "before:init": [
+        "yarn lint",
+        "yarn typecheck",
+        "yarn test --maxWorkers=2"
+      ],
+      "after:bump": "yarn prepare"
     },
     "plugins": {
       "@release-it/conventional-changelog": {
         "preset": {
           "name": "angular"
-        }
+        },
+        "infile": "CHANGELOG.md"
       }
     }
   },
