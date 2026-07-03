@@ -65,6 +65,8 @@ The Web client ID is what your code references for the ID-token audience; each p
 
 In addition to the Cloud Console step above, the host app needs two iOS-specific changes.
 
+> **Using Expo?** Skip the manual `Info.plist` and `AppDelegate` edits below — [our config plugin](#expo-config-plugin) handles them during `expo prebuild`. Bare React Native CLI users continue with the manual steps in this section.
+
 ### 1. Register the OAuth URL scheme
 
 Google routes the sign-in callback back into your app via a custom URL scheme. Add the reversed iOS Client ID to `Info.plist`:
@@ -85,29 +87,30 @@ If you use **Expo**, declare it in `app.json` under `expo.ios.infoPlist.CFBundle
 
 ### 2. Forward incoming URLs to the SDK
 
-In your `AppDelegate`, forward `application(_:open:options:)` to `GoogleSignIn.handleURL(_:)`.
+In your `AppDelegate`, forward `application(_:open:options:)` to `GIDSignIn.sharedInstance.handle(_:)`. Importing `GoogleSignIn` here pulls in the official GoogleSignIn-iOS SDK module (already a transitive dependency of this package).
 
 **Swift:**
 ```swift
-import react_native_social_auth
+import GoogleSignIn
 
-func application(
+@objc
+public func application(
   _ app: UIApplication,
   open url: URL,
   options: [UIApplication.OpenURLOptionsKey: Any] = [:]
 ) -> Bool {
-  return GoogleSignIn.handleURL(url)
+  return GIDSignIn.sharedInstance.handle(url)
 }
 ```
 
 **Objective-C:**
 ```objc
-#import <react_native_social_auth/GoogleSignIn.h>
+#import <GoogleSignIn/GoogleSignIn.h>
 
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-  return [GoogleSignIn handleURL:url];
+  return [[GIDSignIn sharedInstance] handleURL:url];
 }
 ```
 
@@ -123,6 +126,56 @@ GoogleSignIn.configure({
 ```
 
 Finally, run `cd ios && pod install` after installing the package.
+
+## Expo config plugin
+
+This package ships an Expo config plugin so you don't have to hand-edit `Info.plist` or `AppDelegate` in Expo projects. **Both React Native CLI and Expo projects are supported** — pick the setup section that matches your project.
+
+> **Heads up:** Expo Go cannot ship third-party native modules. You must use a [development build](https://docs.expo.dev/develop/development-builds/introduction/) (via `expo-dev-client` and EAS Build) or the bare workflow.
+
+### Install
+
+```sh
+npx expo install @thoughtbot/react-native-social-auth react-native-svg
+```
+
+### Add the plugin
+
+In `app.config.ts` (or `app.json`):
+
+```ts
+export default {
+  expo: {
+    // ...
+    plugins: [
+      [
+        '@thoughtbot/react-native-social-auth',
+        {
+          iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+        },
+      ],
+    ],
+  },
+};
+```
+
+### Plugin props
+
+| Prop          | Type     | Required for iOS | Description                                                                                                                       |
+| ------------- | -------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `iosClientId` | `string` | Yes              | Your iOS OAuth Client ID (e.g. `123456-abc.apps.googleusercontent.com`). The plugin reverses it and registers the URL scheme.     |
+
+Omit `iosClientId` if you only target Android — the plugin becomes a no-op on iOS and logs a warning.
+
+### Regenerate native code
+
+```sh
+npx expo prebuild --clean
+```
+
+This runs the plugin, which writes the reversed iOS Client ID into `Info.plist`'s `CFBundleURLSchemes` and adds the `application(_:open:options:)` URL forwarder to `AppDelegate`. Subsequent prebuilds are idempotent — the plugin won't re-inject if its marker is already present.
+
+You still call `GoogleSignIn.configure({ webClientId, iosClientId })` from JS at runtime (the plugin handles the native bits; it doesn't replace `configure()`).
 
 ## Quick start
 

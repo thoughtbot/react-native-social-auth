@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.9",
+    "@thoughtbot/react-native-social-auth": "workspace:^",
     "expo": "~55.0.15",
     "expo-status-bar": "~55.0.5",
     "react": "19.2.0",

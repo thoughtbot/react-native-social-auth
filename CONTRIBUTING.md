@@ -92,6 +92,7 @@ The test suite covers:
 - **JS API tests** (`src/google/__tests__/GoogleSignIn.test.ts`) — the `configure`-then-call contract on the `GoogleSignIn` wrapper, with the native TurboModule mocked.
 - **Error tests** (`src/google/__tests__/errors.test.ts`) — `GoogleSignInError`, the `GoogleSignInErrorCode` enum, and the `isGoogleSignInError` type guard.
 - **Component tests** (`src/google/__tests__/GoogleSignInButton.test.tsx`) — accessibility labels, `onPress` / `disabled` behavior, and theme/shape/text variants, using [React Native Testing Library](https://callstack.github.io/react-native-testing-library/).
+- **Expo config plugin tests** (`plugin/src/__tests__/withSocialAuth.test.ts`) — `Info.plist` URL scheme reversal and `AppDelegate` URL-handler injection, for both Swift and Objective-C fixtures.
 
 `react-native-svg` is mocked via `__mocks__/react-native-svg.js` so the button renders without native bindings during tests.
 
@@ -151,7 +152,8 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn typecheck`: type-check files with TypeScript.
 - `yarn lint`: lint files with [ESLint](https://eslint.org/).
 - `yarn test`: run unit + component tests with [Jest](https://jestjs.io/) and [React Native Testing Library](https://callstack.github.io/react-native-testing-library/).
-- `yarn prepare`: build the library to `lib/` with [react-native-builder-bob](https://github.com/callstack/react-native-builder-bob) (also runs automatically before `npm publish`).
+- `yarn prepare`: build the library to `lib/` with [react-native-builder-bob](https://github.com/callstack/react-native-builder-bob) and compile the Expo config plugin to `plugin/build/` (also runs automatically before `npm publish`).
+- `yarn build:plugin`: compile only the Expo config plugin (faster than `yarn prepare` when iterating on plugin code).
 - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
