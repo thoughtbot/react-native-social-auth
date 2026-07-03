@@ -27,21 +27,14 @@ jobs:
       pull-requests: write
 
     steps:
-      # Mint a short-lived installation token from the release GitHub App.
-      # The App is on the ruleset bypass list, so pushes made with this token
-      # can update `main` even when branch protection requires PRs.
-      - name: Generate release-bot token
-        id: release-bot
-        uses: actions/create-github-app-token@21cfef2b496dd8ef5b904c159339626a10ad380e # v1.11.0
-        with:
-          app-id: ${{ secrets.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
+      # Check out over SSH using the release deploy key. The key has write
+      # access and is on the `main` ruleset bypass list, so the version-bump
+      # commit and tag can push directly even with branch protection on.
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
-          token: ${{ steps.release-bot.outputs.token }}
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -70,9 +63,10 @@ jobs:
 
       - name: Release
         env:
-          # Use the release-bot token so the version-bump commit + tag push
-          # bypasses main-branch protection.
-          GITHUB_TOKEN: ${{ steps.release-bot.outputs.token }}
+          # Git pushes (branch + tag) go over SSH using the deploy key from
+          # checkout above. GITHUB_TOKEN is only used by release-it for the
+          # GitHub Release API call, which is not covered by branch protection.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # No NPM_TOKEN: authentication is via npm Trusted Publishing (OIDC).
           # Provenance attestation is required for Trusted Publishing.
           NPM_CONFIG_PROVENANCE: 'true'
