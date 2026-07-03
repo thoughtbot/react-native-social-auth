@@ -4,6 +4,8 @@ Drop-in Google Sign-In for React Native using Android's Credential Manager and t
 
 **Platform support:** ✅ Android · ✅ iOS
 
+> ⚠️ **Early development.** This package is pre-1.0 and under active development. The public API — configuration options, method signatures, `GoogleSignInButton` props, and error codes — may change between minor versions without a deprecation cycle. If you need stability, pin the exact version in `package.json` (`"@thoughtbot/react-native-social-auth": "0.x.y"`, not `"^0.x.y"`) and check the [CHANGELOG](CHANGELOG.md) before upgrading. We aim for a stable `1.0.0` once the API has been battle-tested.
+
 ## Features
 
 - Android **Credential Manager** and iOS **GoogleSignIn-iOS SDK** integration, both with auto-sign-in + interactive fallback
