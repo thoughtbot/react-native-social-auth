@@ -41,7 +41,7 @@
     "build:plugin": "tsc --project plugin/tsconfig.json",
     "typecheck": "tsc",
     "test": "jest",
-    "release": "release-it --only-version",
+    "release": "release-it",
     "lint": "eslint \"**/*.{js,ts,tsx}\""
   },
   "keywords": [
