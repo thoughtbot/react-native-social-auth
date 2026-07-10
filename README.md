@@ -1,4 +1,5 @@
 <img src="https://thoughtbot.com/thoughtbot-logo-for-readmes.svg" width="375" />
+
 # @thoughtbot/react-native-social-auth
 
 **Modern Google Sign-In for React Native.** A typed, cross-platform `signIn()` API backed by Android's **Credential Manager** and the **GoogleSignIn-iOS SDK**, plus a branding-compliant `<GoogleSignInButton />` component and a first-party **Expo config plugin**. TypeScript-first, ships as a **Turbo Module** for the new architecture, and works in both bare React Native CLI projects and Expo dev-client / EAS Build.
