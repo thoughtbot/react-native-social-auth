@@ -46,12 +46,25 @@
   },
   "keywords": [
     "react-native",
+    "expo",
+    "expo-config-plugin",
     "ios",
     "android",
+    "google",
+    "google-signin",
+    "google-sign-in",
+    "sign-in-with-google",
+    "credential-manager",
+    "gidsignin",
     "oauth",
-    "social",
+    "oauth2",
     "authentication",
-    "login"
+    "auth",
+    "sso",
+    "login",
+    "turbo-module",
+    "new-architecture",
+    "typescript"
   ],
   "repository": {
     "type": "git",
