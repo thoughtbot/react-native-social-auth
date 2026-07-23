@@ -15,6 +15,8 @@
 - TypeScript-first, ships as a **Turbo Module** (new architecture)
 - Typed errors via `GoogleSignInError` and `GoogleSignInErrorCode` for clean UX-level handling
 
+<img src="https://github.com/thoughtbot/react-native-social-auth/blob/main/example/assets/607211820-e04101f3-30b1-49f9-a249-562496f43061-ezgif.com-video-to-gif-converter.gif" width="375">
+
 ## Requirements
 
 - React Native `>=0.74` with the new architecture enabled
