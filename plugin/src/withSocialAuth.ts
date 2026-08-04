@@ -1,11 +1,14 @@
 import {
   createRunOncePlugin,
   withAppDelegate,
+  withDangerousMod,
   withInfoPlist,
 } from '@expo/config-plugins';
 import type { ConfigPlugin } from '@expo/config-plugins';
 
 const pkg = require('../../package.json');
+const fs = require('fs').promises;
+const path = require('path');
 
 export type SocialAuthPluginProps = {
   /**
@@ -20,6 +23,8 @@ export type SocialAuthPluginProps = {
 
 const PLUGIN_NAME = '@thoughtbot/react-native-social-auth';
 const MARKER = '/* @thoughtbot/react-native-social-auth: URL handler */';
+const MODULAR_HEADERS_MARKER =
+  '# @thoughtbot/react-native-social-auth: GoogleSignIn 8+ dependencies';
 
 /**
  * Compute the reversed iOS Client ID that GoogleSignIn-iOS expects as a
@@ -141,6 +146,48 @@ ${MARKER}
   return next.replace(endRegex, `\n${snippet}\n@end\n`);
 }
 
+/** @internal — exported for tests only. */
+export function injectModularHeaders(contents: string): string {
+  if (
+    contents.includes(MODULAR_HEADERS_MARKER) ||
+    /^\s*use_modular_headers!\s*$/m.test(contents)
+  ) {
+    return contents;
+  }
+
+  const platformLine = /^platform :ios,.*$/m;
+  if (!platformLine.test(contents)) {
+    throw new Error(
+      `[${PLUGIN_NAME}] Could not locate the iOS platform declaration in the Podfile.`
+    );
+  }
+
+  return contents.replace(
+    platformLine,
+    `$&\n${MODULAR_HEADERS_MARKER}\nuse_modular_headers!`
+  );
+}
+
+const withGoogleSignInModularHeaders: ConfigPlugin = (config) => {
+  return withDangerousMod(config, [
+    'ios',
+    async (mod) => {
+      const podfilePath = path.join(
+        mod.modRequest.platformProjectRoot,
+        'Podfile'
+      );
+      const contents = await fs.readFile(podfilePath, 'utf8');
+      const next = injectModularHeaders(contents);
+
+      if (next !== contents) {
+        await fs.writeFile(podfilePath, next);
+      }
+
+      return mod;
+    },
+  ]);
+};
+
 const withSocialAuth: ConfigPlugin<SocialAuthPluginProps | void> = (
   config,
   props
@@ -160,6 +207,7 @@ const withSocialAuth: ConfigPlugin<SocialAuthPluginProps | void> = (
 
   config = withGoogleSignInURLScheme(config, { reversedClientId });
   config = withGoogleSignInAppDelegate(config);
+  config = withGoogleSignInModularHeaders(config);
 
   return config;
 };
