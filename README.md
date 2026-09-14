@@ -1,8 +1,10 @@
+<img src="https://thoughtbot.com/thoughtbot-logo-for-readmes.svg" width="375" />
+
 # @thoughtbot/react-native-social-auth
 
-Drop-in Google Sign-In for React Native using Android's Credential Manager and the official Google branding.
+**Modern Google Sign-In for React Native.** A typed, cross-platform `signIn()` API backed by Android's **Credential Manager** and the **GoogleSignIn-iOS SDK**, plus a branding-compliant `<GoogleSignInButton />` component and a first-party **Expo config plugin**. TypeScript-first, ships as a **Turbo Module** for the new architecture, and works in both bare React Native CLI projects and Expo dev-client / EAS Build.
 
-**Platform support:** ✅ Android · ✅ iOS
+**Platform support:** ✅ Android · ✅ iOS · ✅ Expo (dev-client / EAS Build)
 
 > ⚠️ **Early development.** This package is pre-1.0 and under active development. The public API — configuration options, method signatures, `GoogleSignInButton` props, and error codes — may change between minor versions without a deprecation cycle. If you need stability, pin the exact version in `package.json` (`"@thoughtbot/react-native-social-auth": "0.x.y"`, not `"^0.x.y"`) and check the [CHANGELOG](CHANGELOG.md) before upgrading. We aim for a stable `1.0.0` once the API has been battle-tested.
 
@@ -12,6 +14,8 @@ Drop-in Google Sign-In for React Native using Android's Credential Manager and t
 - Google-branding-compliant **`GoogleSignInButton`** (3 themes, 2 shapes, 3 text variants, icon-only)
 - TypeScript-first, ships as a **Turbo Module** (new architecture)
 - Typed errors via `GoogleSignInError` and `GoogleSignInErrorCode` for clean UX-level handling
+
+<img src="https://github.com/thoughtbot/react-native-social-auth/blob/main/example/assets/607211820-e04101f3-30b1-49f9-a249-562496f43061-ezgif.com-video-to-gif-converter.gif" width="375">
 
 ## Requirements
 
@@ -128,6 +132,17 @@ GoogleSignIn.configure({
 ```
 
 Finally, run `cd ios && pod install` after installing the package.
+
+GoogleSignIn 8 and later includes Swift dependencies that require module maps
+when CocoaPods builds them as static libraries. Add this near the top of your
+`ios/Podfile`, after the iOS platform declaration:
+
+```ruby
+platform :ios, min_ios_version_supported
+use_modular_headers!
+```
+
+The Expo config plugin adds this declaration automatically.
 
 ## Expo config plugin
 
@@ -368,4 +383,18 @@ The example showcases every variant of `GoogleSignInButton` and exercises the fu
 
 ## License
 
-MIT
+React Native Social Auth is Copyright © 2026 thoughtbot. It is free software, and may be
+redistributed under the terms specified in the [LICENSE](/LICENSE) file.
+
+### About thoughtbot
+
+<img src="https://thoughtbot.com/thoughtbot-logo-for-readmes.svg" width="375" />
+
+React Native Social Auth is maintained by thoughtbot, inc.
+The names and logos for thoughtbot are trademarks of thoughtbot, inc.
+
+We love open source software! See [our other projects][community] or
+[hire us][hire] to design, develop, and grow your product.
+
+[community]: https://thoughtbot.com/community?utm_source=github
+[hire]: https://thoughtbot.com/hire-us?utm_source=github

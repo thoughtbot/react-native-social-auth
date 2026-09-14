@@ -27,19 +27,17 @@ jobs:
       pull-requests: write
 
     steps:
+      # Check out over SSH using the release deploy key. The key has write
+      # access and is on the `main` ruleset bypass list, so the version-bump
+      # commit and tag can push directly even with branch protection on.
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
       - name: Setup
         uses: ./.github/actions/setup
-
-      - name: Ensure npm supports Trusted Publishing
-        # Trusted Publishing requires npm >= 11.5.1. Node 24 bundles a recent
-        # npm but the exact minor varies; pin to latest to avoid ambiguity.
-        run: npm install -g npm@latest
 
       - name: Lint
         run: yarn lint
@@ -60,6 +58,9 @@ jobs:
 
       - name: Release
         env:
+          # Git pushes (branch + tag) go over SSH using the deploy key from
+          # checkout above. GITHUB_TOKEN is only used by release-it for the
+          # GitHub Release API call, which is not covered by branch protection.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # No NPM_TOKEN: authentication is via npm Trusted Publishing (OIDC).
           # Provenance attestation is required for Trusted Publishing.

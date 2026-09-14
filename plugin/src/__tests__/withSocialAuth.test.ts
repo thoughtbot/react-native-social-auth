@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import {
+  injectModularHeaders,
   injectObjCURLHandler,
   injectSwiftURLHandler,
   reverseClientId,
@@ -104,5 +105,39 @@ describe('injectObjCURLHandler', () => {
 
   it('throws if @end is missing', () => {
     expect(() => injectObjCURLHandler('// no class here')).toThrow(/@end/);
+  });
+});
+
+describe('injectModularHeaders', () => {
+  const PODFILE_FIXTURE = `require 'expo'
+
+platform :ios, '15.1'
+
+prepare_react_native_project!
+`;
+
+  it('enables modular headers after the platform declaration', () => {
+    const out = injectModularHeaders(PODFILE_FIXTURE);
+    expect(out).toContain(
+      "platform :ios, '15.1'\n" +
+        '# @thoughtbot/react-native-social-auth: GoogleSignIn 8+ dependencies\n' +
+        'use_modular_headers!'
+    );
+  });
+
+  it('does not add a duplicate declaration', () => {
+    const once = injectModularHeaders(PODFILE_FIXTURE);
+    expect(injectModularHeaders(once)).toBe(once);
+  });
+
+  it('preserves an existing modular-headers declaration', () => {
+    const podfile = `${PODFILE_FIXTURE}\nuse_modular_headers!\n`;
+    expect(injectModularHeaders(podfile)).toBe(podfile);
+  });
+
+  it('throws when the platform declaration is missing', () => {
+    expect(() => injectModularHeaders("require 'expo'\n")).toThrow(
+      /platform declaration/
+    );
   });
 });

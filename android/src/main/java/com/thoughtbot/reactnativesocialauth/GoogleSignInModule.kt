@@ -46,7 +46,7 @@ class GoogleSignInModule(reactContext: ReactApplicationContext) :
       return
     }
 
-    val activity = currentActivity
+    val activity = reactApplicationContext.currentActivity
     if (activity == null) {
       promise.reject("ERR_NO_ACTIVITY", "No current activity available")
       return
