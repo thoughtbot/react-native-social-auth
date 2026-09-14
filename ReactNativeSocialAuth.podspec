@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
 
   install_modules_dependencies(s)
 
-  s.dependency "GoogleSignIn", "~> 7.1"
+  s.dependency "GoogleSignIn", "~> 8.0"
 end

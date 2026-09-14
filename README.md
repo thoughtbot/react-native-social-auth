@@ -133,6 +133,17 @@ GoogleSignIn.configure({
 
 Finally, run `cd ios && pod install` after installing the package.
 
+GoogleSignIn 8 and later includes Swift dependencies that require module maps
+when CocoaPods builds them as static libraries. Add this near the top of your
+`ios/Podfile`, after the iOS platform declaration:
+
+```ruby
+platform :ios, min_ios_version_supported
+use_modular_headers!
+```
+
+The Expo config plugin adds this declaration automatically.
+
 ## Expo config plugin
 
 This package ships an Expo config plugin so you don't have to hand-edit `Info.plist` or `AppDelegate` in Expo projects. **Both React Native CLI and Expo projects are supported** — pick the setup section that matches your project.
