@@ -1,3 +1,17 @@
+# Changelog
+
+# [0.3.0](https://github.com/thoughtbot/react-native-social-auth/compare/v0.2.0...v0.3.0) (2026-09-14)
+
+
+### Bug Fixes
+
+* **android:** prevent build failure on RN 0.81+ ([#3](https://github.com/thoughtbot/react-native-social-auth/issues/3)) ([55b26ea](https://github.com/thoughtbot/react-native-social-auth/commit/55b26eaf53092c69ae11930f957e31ae5b5578c5))
+
+
+### Features
+
+* upgrade Google iOS SDK to v8 ([#4](https://github.com/thoughtbot/react-native-social-auth/issues/4)) ([511b24b](https://github.com/thoughtbot/react-native-social-auth/commit/511b24b1546811c6eca5bed805f864b6edd7668e))
+
 # 0.2.0 (2026-07-03)
 
 ### Bug Fixes
