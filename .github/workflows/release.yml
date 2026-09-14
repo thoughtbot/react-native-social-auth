@@ -39,11 +39,6 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Ensure npm supports Trusted Publishing
-        # Trusted Publishing requires npm >= 11.5.1. Node 24 bundles a recent
-        # npm but the exact minor varies; pin to latest to avoid ambiguity.
-        run: npm install -g npm@latest
-
       - name: Lint
         run: yarn lint
 
