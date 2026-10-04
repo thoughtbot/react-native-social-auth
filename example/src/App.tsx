@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import {
   GoogleSignIn,
-  GoogleSignInButton,
   isGoogleSignInError,
   GoogleSignInErrorCode,
   type GoogleUser,
 } from '@thoughtbot/react-native-social-auth';
+import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
 
 const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
 const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
