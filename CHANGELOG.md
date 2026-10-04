@@ -2,6 +2,21 @@
 
 ## [0.3.1](https://github.com/thoughtbot/react-native-social-auth/compare/v0.3.0...v0.3.1) (2026-10-04)
 
+
+### Features
+
+* make `react-native-svg` an optional peer dependency ([#6](https://github.com/thoughtbot/react-native-social-auth/issues/6)) ([a267a15](https://github.com/thoughtbot/react-native-social-auth/commit/a267a15905e4d1efbd817825c70d1f21a27a2b7a))
+
+
+### BREAKING CHANGES
+
+* `GoogleSignInButton` is no longer exported from the package root. Import it from the `@thoughtbot/react-native-social-auth/google-button` subpath instead, and install `react-native-svg` (now optional) only if you use the button:
+
+```diff
+- import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth';
++ import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
+```
+
 # [0.3.0](https://github.com/thoughtbot/react-native-social-auth/compare/v0.2.0...v0.3.0) (2026-09-14)
 
 
