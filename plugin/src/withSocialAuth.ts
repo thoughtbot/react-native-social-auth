@@ -2,6 +2,7 @@ import {
   createRunOncePlugin,
   withAppDelegate,
   withDangerousMod,
+  withEntitlementsPlist,
   withInfoPlist,
 } from '@expo/config-plugins';
 import type { ConfigPlugin } from '@expo/config-plugins';
@@ -16,12 +17,22 @@ export type SocialAuthPluginProps = {
    * (format: `*.apps.googleusercontent.com`). Required to register the
    * URL scheme that GoogleSignIn-iOS uses for its OAuth callback.
    *
-   * Omit for Android-only setups — the plugin becomes a no-op on iOS.
+   * Omit for Android-only (or Apple-only) setups — the Google iOS
+   * configuration is then skipped.
    */
   iosClientId?: string;
+
+  /**
+   * When `true`, adds the `com.apple.developer.applesignin` entitlement
+   * required for Sign in with Apple on iOS. Has no effect on Android.
+   *
+   * @defaultValue false
+   */
+  enableAppleSignIn?: boolean;
 };
 
 const PLUGIN_NAME = '@thoughtbot/react-native-social-auth';
+const APPLE_SIGN_IN_ENTITLEMENT = 'com.apple.developer.applesignin';
 const MARKER = '/* @thoughtbot/react-native-social-auth: URL handler */';
 const MODULAR_HEADERS_MARKER =
   '# @thoughtbot/react-native-social-auth: GoogleSignIn 8+ dependencies';
@@ -188,26 +199,58 @@ const withGoogleSignInModularHeaders: ConfigPlugin = (config) => {
   ]);
 };
 
+/**
+ * Idempotently set the `com.apple.developer.applesignin` entitlement to
+ * `["Default"]`, leaving any other entitlements untouched.
+ */
+/** @internal — exported for tests only. */
+export function applyAppleSignInEntitlement(
+  entitlements: Record<string, unknown>
+): Record<string, unknown> {
+  const existing = entitlements[APPLE_SIGN_IN_ENTITLEMENT];
+  if (!Array.isArray(existing) || !existing.includes('Default')) {
+    entitlements[APPLE_SIGN_IN_ENTITLEMENT] = ['Default'];
+  }
+  return entitlements;
+}
+
+/**
+ * Add the Sign in with Apple capability. Unlike Google, Apple needs only this
+ * entitlement — no URL scheme, AppDelegate forwarding, or modular headers.
+ */
+const withAppleSignInEntitlement: ConfigPlugin = (config) => {
+  return withEntitlementsPlist(config, (mod) => {
+    applyAppleSignInEntitlement(mod.modResults as Record<string, unknown>);
+    return mod;
+  });
+};
+
 const withSocialAuth: ConfigPlugin<SocialAuthPluginProps | void> = (
   config,
   props
 ) => {
   const iosClientId = props?.iosClientId;
+  const enableAppleSignIn = props?.enableAppleSignIn ?? false;
 
-  if (!iosClientId) {
-    console.warn(
-      `[${PLUGIN_NAME}] No iosClientId provided — skipping iOS configuration. ` +
-        'Android consumers can ignore this warning; iOS consumers must pass ' +
-        '{ iosClientId } in their app config plugin entry.'
-    );
-    return config;
+  if (iosClientId) {
+    const reversedClientId = reverseClientId(iosClientId);
+    config = withGoogleSignInURLScheme(config, { reversedClientId });
+    config = withGoogleSignInAppDelegate(config);
+    config = withGoogleSignInModularHeaders(config);
   }
 
-  const reversedClientId = reverseClientId(iosClientId);
+  if (enableAppleSignIn) {
+    config = withAppleSignInEntitlement(config);
+  }
 
-  config = withGoogleSignInURLScheme(config, { reversedClientId });
-  config = withGoogleSignInAppDelegate(config);
-  config = withGoogleSignInModularHeaders(config);
+  if (!iosClientId && !enableAppleSignIn) {
+    console.warn(
+      `[${PLUGIN_NAME}] No iosClientId or enableAppleSignIn provided — ` +
+        'skipping iOS configuration. Android-only consumers can ignore this ' +
+        'warning; iOS consumers must pass { iosClientId } for Google and/or ' +
+        '{ enableAppleSignIn: true } for Apple in their app config plugin entry.'
+    );
+  }
 
   return config;
 };

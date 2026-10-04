@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import {
+  applyAppleSignInEntitlement,
   injectModularHeaders,
   injectObjCURLHandler,
   injectSwiftURLHandler,
@@ -21,6 +22,35 @@ describe('reverseClientId', () => {
 
   it('throws on an empty string', () => {
     expect(() => reverseClientId('')).toThrow();
+  });
+});
+
+describe('applyAppleSignInEntitlement', () => {
+  const KEY = 'com.apple.developer.applesignin';
+
+  it('adds the entitlement to an empty set', () => {
+    expect(applyAppleSignInEntitlement({})).toEqual({ [KEY]: ['Default'] });
+  });
+
+  it('preserves unrelated entitlements', () => {
+    const result = applyAppleSignInEntitlement({
+      'aps-environment': 'development',
+    });
+    expect(result['aps-environment']).toBe('development');
+    expect(result[KEY]).toEqual(['Default']);
+  });
+
+  it('is idempotent when already set', () => {
+    const entitlements = { [KEY]: ['Default'] };
+    expect(applyAppleSignInEntitlement(entitlements)).toEqual({
+      [KEY]: ['Default'],
+    });
+  });
+
+  it('replaces a malformed value', () => {
+    expect(applyAppleSignInEntitlement({ [KEY]: 'nonsense' })[KEY]).toEqual([
+      'Default',
+    ]);
   });
 });
 
