@@ -10,6 +10,11 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./google-button": {
+      "source": "./src/google-button.tsx",
+      "types": "./lib/typescript/src/google-button.d.ts",
+      "default": "./lib/module/google-button.js"
+    },
     "./package.json": "./package.json",
     "./app.plugin.js": "./app.plugin.js"
   },
@@ -122,6 +127,9 @@
   },
   "peerDependenciesMeta": {
     "@expo/config-plugins": {
+      "optional": true
+    },
+    "react-native-svg": {
       "optional": true
     }
   },
