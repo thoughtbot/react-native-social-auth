@@ -19,7 +19,8 @@
       [
         "@thoughtbot/react-native-social-auth",
         {
-          "iosClientId": "476683722118-27sdo4g5f7n5egip0r3ig7v3m35q9cql.apps.googleusercontent.com"
+          "iosClientId": "476683722118-27sdo4g5f7n5egip0r3ig7v3m35q9cql.apps.googleusercontent.com",
+          "enableAppleSignIn": true
         }
       ]
     ],

@@ -11,9 +11,13 @@ import {
   GoogleSignIn,
   isGoogleSignInError,
   GoogleSignInErrorCode,
+  AppleSignIn,
+  isAppleSignInError,
+  AppleSignInErrorCode,
   type GoogleUser,
 } from '@thoughtbot/react-native-social-auth';
 import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
+import { AppleSignInButton } from '@thoughtbot/react-native-social-auth/apple-button';
 
 const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
 const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
@@ -53,6 +57,28 @@ export default function App() {
           default:
             Alert.alert('Sign In Failed', error.message);
         }
+      } else {
+        Alert.alert('Error', 'An unexpected error occurred.');
+      }
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      AppleSignIn.configure({ requestedScopes: ['email', 'fullName'] });
+      const credential = await AppleSignIn.signIn();
+      const name = credential.user.fullName?.givenName ?? 'there';
+      Alert.alert(
+        'Signed in with Apple',
+        `Hi ${name}!\nUser ID: ${credential.user.id}` +
+          (credential.user.email ? `\nEmail: ${credential.user.email}` : '')
+      );
+    } catch (error) {
+      if (isAppleSignInError(error)) {
+        if (error.code === AppleSignInErrorCode.SIGN_IN_CANCELLED) {
+          return;
+        }
+        Alert.alert('Sign In Failed', error.message);
       } else {
         Alert.alert('Error', 'An unexpected error occurred.');
       }
@@ -191,6 +217,28 @@ export default function App() {
           <GoogleSignInButton theme="dark" disabled />
           <GoogleSignInButton theme="neutral" disabled />
         </View>
+
+        <Text style={styles.sectionTitle}>Sign in with Apple (iOS only)</Text>
+        <View style={styles.row}>
+          <AppleSignInButton
+            type="signIn"
+            buttonStyle="black"
+            onPress={handleAppleSignIn}
+            style={styles.appleButton}
+          />
+          <AppleSignInButton
+            type="continue"
+            buttonStyle="white"
+            onPress={handleAppleSignIn}
+            style={styles.appleButton}
+          />
+          <AppleSignInButton
+            type="signUp"
+            buttonStyle="whiteOutline"
+            onPress={handleAppleSignIn}
+            style={styles.appleButton}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -237,5 +285,8 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     marginTop: 16,
+  },
+  appleButton: {
+    width: 240,
   },
 });
