@@ -15,6 +15,11 @@
       "types": "./lib/typescript/src/google-button.d.ts",
       "default": "./lib/module/google-button.js"
     },
+    "./apple-button": {
+      "source": "./src/apple-button.tsx",
+      "types": "./lib/typescript/src/apple-button.d.ts",
+      "default": "./lib/module/apple-button.js"
+    },
     "./package.json": "./package.json",
     "./app.plugin.js": "./app.plugin.js"
   },
@@ -59,6 +64,9 @@
     "google-signin",
     "google-sign-in",
     "sign-in-with-google",
+    "apple",
+    "apple-signin",
+    "sign-in-with-apple",
     "credential-manager",
     "gidsignin",
     "oauth",
@@ -157,10 +165,15 @@
   },
   "codegenConfig": {
     "name": "ReactNativeSocialAuthSpec",
-    "type": "modules",
+    "type": "all",
     "jsSrcsDir": "src",
     "android": {
       "javaPackageName": "com.thoughtbot.reactnativesocialauth"
+    },
+    "ios": {
+      "componentProvider": {
+        "AppleSignInButton": "AppleSignInButtonComponentView"
+      }
     }
   },
   "jest": {
