@@ -11,11 +11,13 @@ import {
   GoogleSignIn,
   isGoogleSignInError,
   GoogleSignInErrorCode,
+  type GoogleUser,
+} from '@thoughtbot/react-native-social-auth/google';
+import {
   AppleSignIn,
   isAppleSignInError,
   AppleSignInErrorCode,
-  type GoogleUser,
-} from '@thoughtbot/react-native-social-auth';
+} from '@thoughtbot/react-native-social-auth/apple';
 import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
 import { AppleSignInButton } from '@thoughtbot/react-native-social-auth/apple-button';
 

@@ -10,6 +10,16 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./google": {
+      "source": "./src/google/index.ts",
+      "types": "./lib/typescript/src/google/index.d.ts",
+      "default": "./lib/module/google/index.js"
+    },
+    "./apple": {
+      "source": "./src/apple/index.ts",
+      "types": "./lib/typescript/src/apple/index.d.ts",
+      "default": "./lib/module/apple/index.js"
+    },
     "./google-button": {
       "source": "./src/google-button.tsx",
       "types": "./lib/typescript/src/google-button.d.ts",

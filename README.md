@@ -214,7 +214,7 @@ import {
   GoogleSignIn,
   isGoogleSignInError,
   type GoogleUser,
-} from '@thoughtbot/react-native-social-auth';
+} from '@thoughtbot/react-native-social-auth/google';
 import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
 
 GoogleSignIn.configure({
@@ -242,7 +242,7 @@ export function SignInScreen() {
 
 ## API reference
 
-All members are named exports from `@thoughtbot/react-native-social-auth`, except [`<GoogleSignInButton />`](#googlesigninbutton-), which is exported from the `@thoughtbot/react-native-social-auth/google-button` subpath.
+The Google API is exported from the `@thoughtbot/react-native-social-auth/google` subpath (and, for convenience, re-exported from the package root). [`<GoogleSignInButton />`](#googlesigninbutton-) is exported separately from `@thoughtbot/react-native-social-auth/google-button` so that `react-native-svg` stays an optional dependency.
 
 ### `GoogleSignIn`
 
@@ -342,7 +342,7 @@ import {
   GoogleSignIn,
   isGoogleSignInError,
   GoogleSignInErrorCode,
-} from '@thoughtbot/react-native-social-auth';
+} from '@thoughtbot/react-native-social-auth/google';
 
 try {
   await GoogleSignIn.signIn();
@@ -397,7 +397,7 @@ import {
   AppleSignIn,
   isAppleSignInError,
   AppleSignInErrorCode,
-} from '@thoughtbot/react-native-social-auth';
+} from '@thoughtbot/react-native-social-auth/apple';
 import { AppleSignInButton } from '@thoughtbot/react-native-social-auth/apple-button';
 
 AppleSignIn.configure({ requestedScopes: ['email', 'fullName'] });
@@ -423,7 +423,7 @@ export function AppleButton() {
 
 ### `AppleSignIn`
 
-The runtime API. All members are named exports from `@thoughtbot/react-native-social-auth`, except [`<AppleSignInButton />`](#applesigninbutton-), which is exported from the `@thoughtbot/react-native-social-auth/apple-button` subpath.
+The runtime API. All members are named exports from `@thoughtbot/react-native-social-auth/apple` (and, for convenience, re-exported from the package root), except [`<AppleSignInButton />`](#applesigninbutton-), which is exported from the `@thoughtbot/react-native-social-auth/apple-button` subpath.
 
 #### `configure(config: AppleSignInConfig): void`
 
