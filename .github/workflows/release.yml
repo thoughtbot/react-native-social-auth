@@ -30,9 +30,16 @@ jobs:
       # Check out over SSH using the release deploy key. The key has write
       # access and is on the `main` ruleset bypass list, so the version-bump
       # commit and tag can push directly even with branch protection on.
+      #
+      # `ref: main` is required: without it, a workflow_dispatch checkout can
+      # land on a detached HEAD, so release-it's version-bump + CHANGELOG commit
+      # is tagged and published but never pushed back onto `main` (the tag ends
+      # up on no branch). Pinning the branch keeps the tag and `main` aligned so
+      # the CHANGELOG stays in sync with the released version.
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
+          ref: main
           fetch-depth: 0
           ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
