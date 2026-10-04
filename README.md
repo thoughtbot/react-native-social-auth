@@ -2,6 +2,10 @@
 
 # @thoughtbot/react-native-social-auth
 
+[![npm version](https://img.shields.io/npm/v/@thoughtbot/react-native-social-auth.svg)](https://www.npmjs.com/package/@thoughtbot/react-native-social-auth)
+[![npm downloads](https://img.shields.io/npm/dm/@thoughtbot/react-native-social-auth.svg)](https://www.npmjs.com/package/@thoughtbot/react-native-social-auth)
+[![license](https://img.shields.io/npm/l/@thoughtbot/react-native-social-auth.svg)](https://github.com/thoughtbot/react-native-social-auth/blob/main/LICENSE)
+
 **Modern Google Sign-In for React Native.** A typed, cross-platform `signIn()` API backed by Android's **Credential Manager** and the **GoogleSignIn-iOS SDK**, plus a branding-compliant `<GoogleSignInButton />` component and a first-party **Expo config plugin**. TypeScript-first, ships as a **Turbo Module** for the new architecture, and works in both bare React Native CLI projects and Expo dev-client / EAS Build.
 
 **Platform support:** ✅ Android · ✅ iOS · ✅ Expo (dev-client / EAS Build)
@@ -22,17 +26,21 @@
 - React Native `>=0.74` with the new architecture enabled
 - Android `minSdkVersion` 24
 - A Google Cloud project with OAuth 2.0 credentials (see [setup](#google-cloud-console-setup))
-- [`react-native-svg`](https://github.com/software-mansion/react-native-svg) `>=13.0.0` (peer dependency — used to render the Google "G" logo)
+- [`react-native-svg`](https://github.com/software-mansion/react-native-svg) `>=13.0.0` — **optional** peer dependency, only required if you use [`<GoogleSignInButton />`](#googlesigninbutton-) (it renders the Google "G" logo)
 
 ## Installation
 
 ```sh
-yarn add @thoughtbot/react-native-social-auth react-native-svg
+yarn add @thoughtbot/react-native-social-auth
 # or
-npm install @thoughtbot/react-native-social-auth react-native-svg
+npm install @thoughtbot/react-native-social-auth
 ```
 
-> `react-native-svg` is a peer dependency. If it's not already in your app, install it explicitly — otherwise you'll see runtime errors like `Tried to register two views with the same name RNSVGRect`.
+> If you use the pre-built [`<GoogleSignInButton />`](#googlesigninbutton-) component, also install `react-native-svg` and import the button from the `/google-button` subpath (see below). The core `GoogleSignIn` API has no SVG dependency.
+>
+> ```sh
+> yarn add react-native-svg
+> ```
 
 After installing, rebuild the native app:
 
@@ -153,7 +161,9 @@ This package ships an Expo config plugin so you don't have to hand-edit `Info.pl
 ### Install
 
 ```sh
-npx expo install @thoughtbot/react-native-social-auth react-native-svg
+npx expo install @thoughtbot/react-native-social-auth
+# add react-native-svg too if you use <GoogleSignInButton />:
+npx expo install react-native-svg
 ```
 
 ### Add the plugin
@@ -200,10 +210,10 @@ You still call `GoogleSignIn.configure({ webClientId, iosClientId })` from JS at
 import { useState } from 'react';
 import {
   GoogleSignIn,
-  GoogleSignInButton,
   isGoogleSignInError,
   type GoogleUser,
 } from '@thoughtbot/react-native-social-auth';
+import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
 
 GoogleSignIn.configure({
   webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
@@ -230,7 +240,7 @@ export function SignInScreen() {
 
 ## API reference
 
-All members are named exports from `@thoughtbot/react-native-social-auth`.
+All members are named exports from `@thoughtbot/react-native-social-auth`, except [`<GoogleSignInButton />`](#googlesigninbutton-), which is exported from the `@thoughtbot/react-native-social-auth/google-button` subpath.
 
 ### `GoogleSignIn`
 
@@ -301,6 +311,12 @@ See [`signIn`](#signin-promisegoogleauthcredential) above.
 ### `<GoogleSignInButton />`
 
 A pre-built button that conforms to the [official Google branding guidelines](https://developers.google.com/identity/branding-guidelines). The button renders the Google "G" via `react-native-svg`, so it stays crisp at any density without bundling raster assets.
+
+Because of that, it's exported from a dedicated subpath and `react-native-svg` must be installed to use it:
+
+```tsx
+import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
+```
 
 | Prop       | Type                                       | Default      | Description                                                          |
 | ---------- | ------------------------------------------ | ------------ | -------------------------------------------------------------------- |
