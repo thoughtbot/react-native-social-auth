@@ -2,7 +2,10 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "@thoughtbot/react-native-social-auth": ["./src/index"]
+      "@thoughtbot/react-native-social-auth": ["./src/index"],
+      "@thoughtbot/react-native-social-auth/google-button": [
+        "./src/google-button"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
