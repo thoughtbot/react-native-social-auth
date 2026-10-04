@@ -18,5 +18,7 @@ Pod::Spec.new do |s|
 
   install_modules_dependencies(s)
 
+  s.frameworks = "AuthenticationServices"
+
   s.dependency "GoogleSignIn", "~> 8.0"
 end
