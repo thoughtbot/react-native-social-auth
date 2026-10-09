@@ -3,8 +3,13 @@
     "rootDir": ".",
     "paths": {
       "@thoughtbot/react-native-social-auth": ["./src/index"],
+      "@thoughtbot/react-native-social-auth/google": ["./src/google/index"],
+      "@thoughtbot/react-native-social-auth/apple": ["./src/apple/index"],
       "@thoughtbot/react-native-social-auth/google-button": [
         "./src/google-button"
+      ],
+      "@thoughtbot/react-native-social-auth/apple-button": [
+        "./src/apple-button"
       ]
     },
     "allowUnreachableCode": false,
