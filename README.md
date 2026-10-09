@@ -12,9 +12,18 @@ Typed, Turbo Module social sign-in for React Native: **Google** (Android Credent
 
 > ⚠️ **Pre-1.0.** The API may change between minor versions without deprecation — pin an exact version and check the [CHANGELOG](CHANGELOG.md) before upgrading.
 
-<img src="https://github.com/thoughtbot/react-native-social-auth/blob/main/example/assets/607211820-e04101f3-30b1-49f9-a249-562496f43061-ezgif.com-video-to-gif-converter.gif" width="375">
 
-https://github.com/user-attachments/assets/cd67750b-d1a4-4737-ae08-860f27c4585c
+<table>
+  <tr>
+    <th>Sign in with Google</th>
+    <th>Sign in with Apple</th>
+  </tr>
+  <tr>
+    <td> <img src="https://github.com/thoughtbot/react-native-social-auth/blob/main/example/assets/607211820-e04101f3-30b1-49f9-a249-562496f43061-ezgif.com-video-to-gif-converter.gif" width="285"></td>
+    <td>https://github.com/user-attachments/assets/cd67750b-d1a4-4737-ae08-860f27c4585c</td>
+  </tr>
+</table>
+
 
 
 
