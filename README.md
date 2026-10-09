@@ -14,6 +14,10 @@ Typed, Turbo Module social sign-in for React Native: **Google** (Android Credent
 
 <img src="https://github.com/thoughtbot/react-native-social-auth/blob/main/example/assets/607211820-e04101f3-30b1-49f9-a249-562496f43061-ezgif.com-video-to-gif-converter.gif" width="375">
 
+https://github.com/user-attachments/assets/cd67750b-d1a4-4737-ae08-860f27c4585c
+
+
+
 Requires React Native `>=0.74` (new architecture), Android `minSdkVersion` 24.
 
 ## Install
