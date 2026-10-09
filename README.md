@@ -8,7 +8,7 @@
 
 **Modern social sign-in for React Native.** A typed `signIn()` API for **Google** (backed by Android's **Credential Manager** and the **GoogleSignIn-iOS SDK**) and **Sign in with Apple** (backed by the native **AuthenticationServices** framework on iOS), plus branding-compliant button components and a first-party **Expo config plugin**. TypeScript-first, ships as a **Turbo Module** for the new architecture, and works in both bare React Native CLI projects and Expo dev-client / EAS Build.
 
-**Platform support:** Google — ✅ Android · ✅ iOS · ✅ Expo. Apple — ✅ iOS · ✅ Expo (Android not supported).
+**Platform support:** Google — ✅ Android · ✅ iOS · ✅ Expo. Apple — ✅ iOS · ✅ Expo.
 
 > ⚠️ **Early development.** This package is pre-1.0 and under active development. The public API — configuration options, method signatures, button props, and error codes — may change between minor versions without a deprecation cycle. If you need stability, pin the exact version in `package.json` (`"@thoughtbot/react-native-social-auth": "0.x.y"`, not `"^0.x.y"`) and check the [CHANGELOG](CHANGELOG.md) before upgrading. We aim for a stable `1.0.0` once the API has been battle-tested.
 
@@ -376,13 +376,13 @@ try {
 
 ## Sign in with Apple
 
-Sign in with Apple is **iOS-only** (iOS 13+) and uses the native `ASAuthorizationController` — there is no Google Cloud–style console setup and no third-party SDK. Apple's [App Store Review Guideline 4.8](https://developer.apple.com/app-store/review/guidelines/#sign-in-with-apple) requires offering Sign in with Apple when your iOS app offers Google (or other third-party) sign-in, so most apps shipping the Google provider on iOS need this too.
+Sign in with Apple is **iOS-only** (iOS 13+) and uses the native `ASAuthorizationController`. Apple's [App Store Review Guideline 4.8](https://developer.apple.com/app-store/review/guidelines/#sign-in-with-apple) requires offering Sign in with Apple when your iOS app offers Google (or other third-party) sign-in.
 
 > On Android, every method except `isAvailable()` throws `AppleSignInError` with code `NOT_SUPPORTED`, and `<AppleSignInButton />` renders `null`. Gate your Apple UI with `AppleSignIn.isAvailable()` (or `Platform.OS === 'ios'`).
 
 ### iOS setup
 
-Sign in with Apple needs the **`com.apple.developer.applesignin`** entitlement (the "Sign in with Apple" capability) — nothing else. Unlike Google it needs no URL scheme and no `AppDelegate` changes.
+Sign in with Apple needs the **`com.apple.developer.applesignin`** entitlement (the "Sign in with Apple" capability).
 
 - **Expo:** set `enableAppleSignIn: true` in the [config plugin](#expo-config-plugin), then run `npx expo prebuild --clean`. The plugin writes the entitlement for you.
 - **Bare React Native:** in Xcode, select your target → **Signing & Capabilities** → **+ Capability** → **Sign in with Apple**. This adds the entitlement to your `.entitlements` file. You must also enable the capability for your App ID in the [Apple Developer portal](https://developer.apple.com/account/resources/identifiers/list).
@@ -452,7 +452,7 @@ Queries whether a previously obtained `user.id` is still valid — useful at app
 
 #### `isAvailable(): boolean`
 
-`true` on iOS 13+, `false` on older iOS and on Android. Safe to call before `configure()`.
+`true` on iOS 13+. Safe to call before `configure()`.
 
 > There is deliberately no `signOut` or `revokeAccess`: Apple has no client-side sign-out, and revocation is a server-side token call. Use `getCredentialState` to detect revocation.
 
