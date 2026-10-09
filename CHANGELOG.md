@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.4.0](https://github.com/thoughtbot/react-native-social-auth/compare/v0.3.1...v0.4.0) (2026-10-09)
+
+
+### Features
+
+* **ios:** sign in with apple ([#8](https://github.com/thoughtbot/react-native-social-auth/issues/8)) ([37c2dad](https://github.com/thoughtbot/react-native-social-auth/commit/37c2dad5461d349bd8d426fe226194def271c476))
+
 ## [0.3.1](https://github.com/thoughtbot/react-native-social-auth/compare/v0.3.0...v0.3.1) (2026-10-04)
 
 
