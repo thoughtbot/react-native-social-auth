@@ -6,18 +6,19 @@
 [![npm downloads](https://img.shields.io/npm/dm/@thoughtbot/react-native-social-auth.svg)](https://www.npmjs.com/package/@thoughtbot/react-native-social-auth)
 [![license](https://img.shields.io/npm/l/@thoughtbot/react-native-social-auth.svg)](https://github.com/thoughtbot/react-native-social-auth/blob/main/LICENSE)
 
-**Modern Google Sign-In for React Native.** A typed, cross-platform `signIn()` API backed by Android's **Credential Manager** and the **GoogleSignIn-iOS SDK**, plus a branding-compliant `<GoogleSignInButton />` component and a first-party **Expo config plugin**. TypeScript-first, ships as a **Turbo Module** for the new architecture, and works in both bare React Native CLI projects and Expo dev-client / EAS Build.
+**Modern social sign-in for React Native.** A typed `signIn()` API for **Google** (backed by Android's **Credential Manager** and the **GoogleSignIn-iOS SDK**) and **Sign in with Apple** (backed by the native **AuthenticationServices** framework on iOS), plus branding-compliant button components and a first-party **Expo config plugin**. TypeScript-first, ships as a **Turbo Module** for the new architecture, and works in both bare React Native CLI projects and Expo dev-client / EAS Build.
 
-**Platform support:** ✅ Android · ✅ iOS · ✅ Expo (dev-client / EAS Build)
+**Platform support:** Google — ✅ Android · ✅ iOS · ✅ Expo. Apple — ✅ iOS · ✅ Expo.
 
-> ⚠️ **Early development.** This package is pre-1.0 and under active development. The public API — configuration options, method signatures, `GoogleSignInButton` props, and error codes — may change between minor versions without a deprecation cycle. If you need stability, pin the exact version in `package.json` (`"@thoughtbot/react-native-social-auth": "0.x.y"`, not `"^0.x.y"`) and check the [CHANGELOG](CHANGELOG.md) before upgrading. We aim for a stable `1.0.0` once the API has been battle-tested.
+> ⚠️ **Early development.** This package is pre-1.0 and under active development. The public API — configuration options, method signatures, button props, and error codes — may change between minor versions without a deprecation cycle. If you need stability, pin the exact version in `package.json` (`"@thoughtbot/react-native-social-auth": "0.x.y"`, not `"^0.x.y"`) and check the [CHANGELOG](CHANGELOG.md) before upgrading. We aim for a stable `1.0.0` once the API has been battle-tested.
 
 ## Features
 
 - Android **Credential Manager** and iOS **GoogleSignIn-iOS SDK** integration, both with auto-sign-in + interactive fallback
-- Google-branding-compliant **`GoogleSignInButton`** (3 themes, 2 shapes, 3 text variants, icon-only)
+- **Sign in with Apple** via the native `ASAuthorizationController` (iOS 13+), including a credential-state query and the official native button
+- Branding-compliant **`GoogleSignInButton`** (3 themes, 2 shapes, 3 text variants, icon-only) and **`AppleSignInButton`** (Apple's native `ASAuthorizationAppleIDButton`)
 - TypeScript-first, ships as a **Turbo Module** (new architecture)
-- Typed errors via `GoogleSignInError` and `GoogleSignInErrorCode` for clean UX-level handling
+- Typed errors via `GoogleSignInError` / `AppleSignInError` and their error-code enums for clean UX-level handling
 
 <img src="https://github.com/thoughtbot/react-native-social-auth/blob/main/example/assets/607211820-e04101f3-30b1-49f9-a249-562496f43061-ezgif.com-video-to-gif-converter.gif" width="375">
 
@@ -188,11 +189,12 @@ export default {
 
 ### Plugin props
 
-| Prop          | Type     | Required for iOS | Description                                                                                                                       |
-| ------------- | -------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `iosClientId` | `string` | Yes              | Your iOS OAuth Client ID (e.g. `123456-abc.apps.googleusercontent.com`). The plugin reverses it and registers the URL scheme.     |
+| Prop                | Type      | Required for iOS   | Description                                                                                                                       |
+| ------------------- | --------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `iosClientId`       | `string`  | Yes (for Google)   | Your iOS OAuth Client ID (e.g. `123456-abc.apps.googleusercontent.com`). The plugin reverses it and registers the URL scheme.     |
+| `enableAppleSignIn` | `boolean` | Yes (for Apple)    | When `true`, adds the `com.apple.developer.applesignin` entitlement required for Sign in with Apple. No effect on Android.         |
 
-Omit `iosClientId` if you only target Android — the plugin becomes a no-op on iOS and logs a warning.
+Omit both if you only target Android — the plugin becomes a no-op on iOS and logs a warning. The two props are independent: pass `iosClientId` for Google, `enableAppleSignIn` for Apple, or both.
 
 ### Regenerate native code
 
@@ -212,7 +214,7 @@ import {
   GoogleSignIn,
   isGoogleSignInError,
   type GoogleUser,
-} from '@thoughtbot/react-native-social-auth';
+} from '@thoughtbot/react-native-social-auth/google';
 import { GoogleSignInButton } from '@thoughtbot/react-native-social-auth/google-button';
 
 GoogleSignIn.configure({
@@ -240,7 +242,7 @@ export function SignInScreen() {
 
 ## API reference
 
-All members are named exports from `@thoughtbot/react-native-social-auth`, except [`<GoogleSignInButton />`](#googlesigninbutton-), which is exported from the `@thoughtbot/react-native-social-auth/google-button` subpath.
+The Google API is exported from the `@thoughtbot/react-native-social-auth/google` subpath (and, for convenience, re-exported from the package root). [`<GoogleSignInButton />`](#googlesigninbutton-) is exported separately from `@thoughtbot/react-native-social-auth/google-button` so that `react-native-svg` stays an optional dependency.
 
 ### `GoogleSignIn`
 
@@ -340,7 +342,7 @@ import {
   GoogleSignIn,
   isGoogleSignInError,
   GoogleSignInErrorCode,
-} from '@thoughtbot/react-native-social-auth';
+} from '@thoughtbot/react-native-social-auth/google';
 
 try {
   await GoogleSignIn.signIn();
@@ -372,6 +374,129 @@ try {
 | `NETWORK_ERROR`                | The device couldn't reach Google's auth servers.                                         |
 | `NOT_CONFIGURED`               | A method was called before `GoogleSignIn.configure()`.                                   |
 
+## Sign in with Apple
+
+Sign in with Apple is **iOS-only** (iOS 13+) and uses the native `ASAuthorizationController`. Apple's [App Store Review Guideline 4.8](https://developer.apple.com/app-store/review/guidelines/#sign-in-with-apple) requires offering Sign in with Apple when your iOS app offers Google (or other third-party) sign-in.
+
+> On Android, every method except `isAvailable()` throws `AppleSignInError` with code `NOT_SUPPORTED`, and `<AppleSignInButton />` renders `null`. Gate your Apple UI with `AppleSignIn.isAvailable()` (or `Platform.OS === 'ios'`).
+
+### iOS setup
+
+Sign in with Apple needs the **`com.apple.developer.applesignin`** entitlement (the "Sign in with Apple" capability).
+
+- **Expo:** set `enableAppleSignIn: true` in the [config plugin](#expo-config-plugin), then run `npx expo prebuild --clean`. The plugin writes the entitlement for you.
+- **Bare React Native:** in Xcode, select your target → **Signing & Capabilities** → **+ Capability** → **Sign in with Apple**. This adds the entitlement to your `.entitlements` file. You must also enable the capability for your App ID in the [Apple Developer portal](https://developer.apple.com/account/resources/identifiers/list).
+
+Then `cd ios && pod install`.
+
+### Quick start
+
+```tsx
+import { useState } from 'react';
+import {
+  AppleSignIn,
+  isAppleSignInError,
+  AppleSignInErrorCode,
+} from '@thoughtbot/react-native-social-auth/apple';
+import { AppleSignInButton } from '@thoughtbot/react-native-social-auth/apple-button';
+
+AppleSignIn.configure({ requestedScopes: ['email', 'fullName'] });
+
+export function AppleButton() {
+  const handleSignIn = async () => {
+    try {
+      const credential = await AppleSignIn.signIn();
+      // Send credential.identityToken to your backend for verification.
+      // Persist credential.user.email / fullName now — Apple only returns
+      // them on the FIRST authorization.
+    } catch (error) {
+      if (isAppleSignInError(error) && error.code === AppleSignInErrorCode.SIGN_IN_CANCELLED) {
+        return;
+      }
+      throw error;
+    }
+  };
+
+  return <AppleSignInButton onPress={handleSignIn} />;
+}
+```
+
+### `AppleSignIn`
+
+The runtime API. All members are named exports from `@thoughtbot/react-native-social-auth/apple` (and, for convenience, re-exported from the package root), except [`<AppleSignInButton />`](#applesigninbutton-), which is exported from the `@thoughtbot/react-native-social-auth/apple-button` subpath.
+
+#### `configure(config: AppleSignInConfig): void`
+
+| Field             | Type                          | Required | Description                                                                              |
+| ----------------- | ----------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `requestedScopes` | `('email' \| 'fullName')[]`   | No       | What to request on first authorization. Default `['email', 'fullName']`.                 |
+| `nonce`           | `string`                      | No       | Value bound into the returned identity token; verify it server-side to prevent replay.   |
+| `state`           | `string`                      | No       | Opaque value echoed back on the credential.                                              |
+
+#### `signIn(): Promise<AppleAuthCredential>`
+
+Presents the native sign-in sheet. Resolves to an `AppleAuthCredential`:
+
+| Field               | Type                      | Description                                                              |
+| ------------------- | ------------------------- | ------------------------------------------------------------------------ |
+| `identityToken`     | `string \| null`          | Apple-issued JWT. Verify on your backend against Apple's public keys.    |
+| `authorizationCode` | `string \| null`          | One-time code your backend exchanges for refresh/access tokens.          |
+| `state`             | `string \| null`          | The `state` value passed to `configure`, echoed back.                    |
+| `user`              | [`AppleUser`](#appleuser) | The authenticated user.                                                  |
+
+> ⚠️ **First-authorization only:** `user.email` and `user.fullName` are populated **only the very first time** a user authorizes your app. On every later sign-in they are `null`, even if you keep requesting them — so persist them server-side on first sign-in. `user.id` is always returned.
+
+#### `getCredentialState(userId: string): Promise<AppleCredentialState>`
+
+Queries whether a previously obtained `user.id` is still valid — useful at app launch to detect a revoked credential. Does not require `configure()`. Returns `'authorized'`, `'revoked'`, `'notFound'`, or `'transferred'`.
+
+#### `isAvailable(): boolean`
+
+`true` on iOS 13+. Safe to call before `configure()`.
+
+> There is deliberately no `signOut` or `revokeAccess`: Apple has no client-side sign-out, and revocation is a server-side token call. Use `getCredentialState` to detect revocation.
+
+### Types
+
+#### `AppleUser`
+
+| Field            | Type                                              |
+| ---------------- | ------------------------------------------------- |
+| `id`             | `string`                                          |
+| `email`          | `string \| null`                                  |
+| `fullName`       | `{ givenName, familyName, nickname } \| null`     |
+| `realUserStatus` | `'likelyReal' \| 'unknown' \| 'unsupported'`      |
+
+### `<AppleSignInButton />`
+
+Apple's official `ASAuthorizationAppleIDButton`, bridged as a native component so it always matches the current Human Interface Guidelines and localizes automatically. iOS-only — renders `null` on Android. Exported from the `/apple-button` subpath (no `react-native-svg` dependency):
+
+```tsx
+import { AppleSignInButton } from '@thoughtbot/react-native-social-auth/apple-button';
+```
+
+| Prop           | Type                                          | Default     | Description                                               |
+| -------------- | --------------------------------------------- | ----------- | --------------------------------------------------------- |
+| `type`         | `'signIn' \| 'continue' \| 'signUp'`          | `'signIn'`  | The call-to-action label.                                 |
+| `buttonStyle`  | `'black' \| 'white' \| 'whiteOutline'`        | `'black'`   | Visual style.                                             |
+| `cornerRadius` | `number`                                      | Apple's default | Corner radius in points.                              |
+| `onPress`      | `() => void`                                  | —           | Tap handler — wire this to `AppleSignIn.signIn()`.        |
+| `style`        | `StyleProp<ViewStyle>`                        | —           | Container styles (width, height, margin, etc.).           |
+| `testID`       | `string`                                      | —           | Testing identifier.                                       |
+
+### Error handling
+
+Every error from `AppleSignIn` is an `AppleSignInError` with a `code` from `AppleSignInErrorCode`. Narrow with `isAppleSignInError`:
+
+| Code                | Meaning                                                                      |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `SIGN_IN_CANCELLED` | The user dismissed the sheet. Don't show an error.                           |
+| `SIGN_IN_FAILED`    | Generic failure from AuthenticationServices — the `message` has details.     |
+| `INVALID_RESPONSE`  | Apple returned a malformed or empty authorization.                           |
+| `NOT_HANDLED`       | The request could not be handled (e.g. no Apple account on the device).      |
+| `NOT_CONFIGURED`    | `signIn()` was called before `AppleSignIn.configure()`.                      |
+| `NOT_SUPPORTED`     | Sign in with Apple is unavailable (Android, or iOS older than 13).           |
+
 ## Example app
 
 A runnable example lives in [`/example`](example/). To try it:
@@ -388,7 +513,7 @@ yarn workspace @thoughtbot/react-native-social-auth-example ios
 
 For iOS, edit `example/app.json` and replace `REPLACE_WITH_REVERSED_IOS_CLIENT_ID` under `expo.ios.infoPlist.CFBundleURLTypes` with your reversed iOS Client ID, then run `npx expo prebuild --platform ios --clean` before the `yarn ios` command.
 
-The example showcases every variant of `GoogleSignInButton` and exercises the full public API.
+The example showcases every variant of `GoogleSignInButton`, the `AppleSignInButton` (on iOS), and exercises the full public API.
 
 ## Contributing
 

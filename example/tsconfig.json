@@ -2,5 +2,12 @@
   "extends": "../tsconfig",
   "compilerOptions": {
     // Avoid expo-cli auto-generating a tsconfig
+    "paths": {
+      "@thoughtbot/react-native-social-auth": ["../src/index.tsx"],
+      "@thoughtbot/react-native-social-auth/google": ["../src/google/index.ts"],
+      "@thoughtbot/react-native-social-auth/apple": ["../src/apple/index.ts"],
+      "@thoughtbot/react-native-social-auth/google-button": ["../src/google-button.tsx"],
+      "@thoughtbot/react-native-social-auth/apple-button": ["../src/apple-button.tsx"]
+    }
   }
 }
