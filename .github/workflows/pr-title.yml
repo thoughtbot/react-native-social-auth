@@ -1,0 +1,35 @@
+name: PR Title
+
+# Squash-merges use the PR title as the commit subject, which never passes
+# through the local commit-msg hook. This lints the PR title against the same
+# Conventional Commits config (the `commitlint` field in package.json) so merged
+# commit subjects stay conventional.
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint-pr-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Lint PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s' "$PR_TITLE" | yarn commitlint
