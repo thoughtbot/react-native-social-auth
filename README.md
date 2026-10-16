@@ -153,10 +153,11 @@ Import from `@thoughtbot/react-native-social-auth/google`. Call `configure()` on
 | `offlineAccess` | `boolean` | Also request a server auth code. Default `false`. |
 | `scopes` | `string[]` | Extra OAuth scopes beyond profile/email. |
 | `hostedDomain` | `string` | Restrict to a Google Workspace domain. |
-| `autoSelect` | `boolean` | Silently reuse the last account when possible. Default `false`. |
+| `autoSelect` | `boolean` | Android only. Silently reuse the last account when possible. Default `false`. |
+| `filterByAuthorizedAccounts` | `boolean` | Android only. Show only accounts already used with your app, instead of all accounts on the device. Default `false`. |
 | `nonce` | `string` | Value bound into the ID token for backend verification. |
 
-**`signIn(): Promise<GoogleAuthCredential>`** — tries auto sign-in, then the interactive sheet. Resolves to `{ idToken, accessToken: string | null, serverAuthCode: string | null, user: GoogleUser }`; rejects with `GoogleSignInError`.
+**`signIn(): Promise<GoogleAuthCredential>`** — tries auto sign-in, then the interactive sheet. On Android, this behavior can be tuned with `autoSelect` / `filterByAuthorizedAccounts`. Resolves to `{ idToken, accessToken: string | null, serverAuthCode: string | null, user: GoogleUser }`; rejects with `GoogleSignInError`.
 
 **`signOut(): Promise<void>`** — clears local credential state. **`getCurrentUser(): Promise<GoogleUser | null>`** — in-memory user. **`revokeAccess(): Promise<void>`** — revokes app access. **`isSignedIn(): boolean`** — synchronous in-memory check.
 
