@@ -48,6 +48,18 @@ export interface GoogleSignInConfig {
   autoSelect?: boolean;
 
   /**
+   * When `true`, the UI will only display Google accounts that the user has
+   * previously used to sign into your app
+   *
+   * When `false`, The UI will display all Google accounts currently present on the
+   * user's Android device, regardless of whether they have used them with your app before
+   *
+   * @platform android
+   * @defaultValue false
+   */
+  filterByAuthorizedAccounts?: boolean;
+
+  /**
    * A unique value bound into the ID token. Recommended when verifying tokens
    * server-side to prevent replay attacks.
    *

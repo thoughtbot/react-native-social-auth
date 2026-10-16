@@ -30,13 +30,19 @@ class GoogleSignInModule(reactContext: ReactApplicationContext) :
 
   private var webClientId: String? = null
   private var nonce: String? = null
-  private var autoSelect: Boolean = false
+  private var autoSelect: Boolean? = null
+  private var filterByAuthorizedAccounts: Boolean? = null
   private var currentUser: GoogleIdTokenCredential? = null
 
   override fun configure(config: ReadableMap) {
     webClientId = config.getString("webClientId")
     nonce = if (config.hasKey("nonce")) config.getString("nonce") else null
-    autoSelect = if (config.hasKey("autoSelect")) config.getBoolean("autoSelect") else false
+    autoSelect = if (config.hasKey("autoSelect") && !config.isNull("autoSelect")) config.getBoolean("autoSelect") else null
+    filterByAuthorizedAccounts =
+      if (config.hasKey("filterByAuthorizedAccounts") &&
+          !config.isNull("filterByAuthorizedAccounts")) {
+        config.getBoolean("filterByAuthorizedAccounts")
+      } else null
   }
 
   override fun signIn(promise: Promise) {
@@ -70,33 +76,37 @@ class GoogleSignInModule(reactContext: ReactApplicationContext) :
     clientId: String,
     activity: android.app.Activity
   ): GetCredentialResponse {
-    val autoSignInOption = GetGoogleIdOption.Builder()
-      .setFilterByAuthorizedAccounts(true)
+    if (autoSelect != null || filterByAuthorizedAccounts != null) {
+      // Developer explicitly configured at least one option.
+      // Respect the configured values without the existing fallback.
+      return buildCredential(clientId, activity, autoSelect ?: false, filterByAuthorizedAccounts ?: false)
+    }
+
+    return try {
+      buildCredential(clientId, activity, true, true)
+    } catch (e: NoCredentialException) {
+      buildCredential(clientId, activity, false, false)
+    }
+  }
+
+  private suspend fun buildCredential(
+    clientId: String,
+    activity: android.app.Activity,
+    autoSelect: Boolean,
+    filterAuthorized: Boolean
+  ): GetCredentialResponse {
+    val signInOption = GetGoogleIdOption.Builder()
+      .setFilterByAuthorizedAccounts(filterAuthorized)
       .setServerClientId(clientId)
-      .setAutoSelectEnabled(true)
+      .setAutoSelectEnabled(autoSelect)
       .apply { nonce?.let { setNonce(it) } }
       .build()
 
-    val autoRequest = GetCredentialRequest.Builder()
-      .addCredentialOption(autoSignInOption)
+    val signInRequest = GetCredentialRequest.Builder()
+      .addCredentialOption(signInOption)
       .build()
 
-    return try {
-      credentialManager.getCredential(activity, autoRequest)
-    } catch (e: NoCredentialException) {
-      val fallbackOption = GetGoogleIdOption.Builder()
-        .setFilterByAuthorizedAccounts(false)
-        .setServerClientId(clientId)
-        .setAutoSelectEnabled(false)
-        .apply { nonce?.let { setNonce(it) } }
-        .build()
-
-      val fallbackRequest = GetCredentialRequest.Builder()
-        .addCredentialOption(fallbackOption)
-        .build()
-
-      credentialManager.getCredential(activity, fallbackRequest)
-    }
+    return credentialManager.getCredential(activity, signInRequest)
   }
 
   private fun handleSignInResult(result: GetCredentialResponse, promise: Promise) {
